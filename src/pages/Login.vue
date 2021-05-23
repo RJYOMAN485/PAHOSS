@@ -1,0 +1,183 @@
+<template>
+  <div
+    style="min-height:100vh;"
+    class="row flex flex-center q-gutter-md custombg"
+  >
+    <q-card
+      class="my-card q-pa-md col"
+      style="max-width: 600px;border: 3px solid #26A69A;"
+    >
+      <q-card-section class="bg-grey-8 text-white">
+        <div class="text-h6 text-center">User Login</div>
+      </q-card-section>
+
+      <q-card-section class="bg-red-5 q-mt-sm" v-if="this.errorMessage">
+        <div class="text-white text-weight-light">{{ this.errorMessage }}</div>
+      </q-card-section>
+      <q-card-section>
+        <q-form @submit="submitForm" class="q-gutter-md">
+          <q-input
+            v-model="formData.email"
+            :rules="[val => (val && val.length > 0) || 'Please type something']"
+            color="purple-12"
+            label="Email"
+            type="email"
+          >
+            <template v-slot:prepend>
+              <q-icon name="email" />
+            </template>
+          </q-input>
+
+          <q-input
+            :rules="[val => (val && val.length > 0) || 'Please type something']"
+            type="password"
+            color="purple-12"
+            label="Password"
+            v-model="formData.password"
+          >
+            <template v-slot:prepend>
+              <q-icon name="lock" />
+            </template>
+          </q-input>
+
+          <!-- <div> -->
+          <q-btn
+            label="Login"
+            class="full-width"
+            :loading="loading"
+            @click="submitForm"
+            type="submit"
+            color="secondary"
+          />
+          <!-- </div> -->
+        </q-form>
+
+        <div class="text-green q-mt-md" style="max-width:430px;display:flex">
+          <small class=""
+            ><q-icon name="info" size="xs" />Already have an account ?
+            <q-btn
+              size="xs"
+              to="/register"
+              flat
+              color="blue"
+              dense
+              label="Register"
+            />
+            page instead
+          </small>
+        </div>
+      </q-card-section>
+    </q-card>
+  </div>
+</template>
+
+<script>
+import { mapActions } from "vuex";
+import { mapState } from "vuex";
+import axios from "axios";
+export default {
+  computed: {
+    ...mapState("store", ["errorMessage"])
+  },
+
+  // created() {
+  //   axios
+  //     .get(this.$store.state.store.APP_URL + "user")
+  //     .then(response => {
+  //       // return true;
+  //     })
+  //     .catch(err => {
+  //       console.error = () => {};
+
+  //       console.log("not logged", err.message);
+  //     });
+  // },
+
+  data() {
+    return {
+      name: null,
+      age: null,
+      loading: false,
+
+      accept: false,
+
+      errors: [],
+
+      formData: {
+        email: "",
+        password: "",
+        device_name: "browser",
+        gender: "female"
+      },
+      error: {}
+    };
+  },
+
+  methods: {
+    async submitForm() {
+      this.loading = true;
+      console.log("submitted");
+
+      localStorage.removeItem("token");
+      // this.loginUser(this.formData)
+
+      await this.$axios
+        .get("http://127.0.0.1:8000/sanctum/csrf-cookie")
+        .then(response => {
+          // console.log(response);
+          this.$axios
+            .post("http://127.0.0.1:8000/login", this.formData)
+            .then(response => {
+              // return console.log(response.data);
+              this.loading = false;
+
+              // localStorage.setItem('token',response.data)
+              console.log("server response", response.data);
+
+              // this.$store.commit('setUserDetails',response.data);
+
+              this.loginUser(response.data);
+
+              console.log("userDetails", this.$store.state.store.userDetails);
+              if (response.data.roles == "admin")
+                this.$router.replace("/dashboard");
+              else {
+                console.log("redirect to validate");
+                this.$router.replace("/validate-lisence");
+              }
+              // console.log(response.data);
+              console.log(
+                "store email",
+                this.$store.state.store.userDetails.email
+              );
+            })
+            .catch(error => {
+              // return console.log(error.message);
+              this.loading = false;
+              this.errors = error.response.data.errors;
+              this.$q.notify({
+                message: error.message,
+                color: "red-4",
+                position: "top",
+                icon: "warning"
+              });
+            });
+        });
+    }
+  }
+};
+</script>
+
+<style lang="sass" scoped>
+
+.custombg
+  // background: linear-gradient(rgba(255,255,255,.5), rgba(200,240,240,.5)),url(../assets/mining.jpg)
+  // background: url(../assets/mining.jpg)
+  background-size: cover
+  background-repeat: no-repeat
+  background-position: center
+  // background: #6190E8 /* fallback for old browsers */
+  // background: -webkit-linear-gradient(to top, #A7BFE8, #6190E8)  /* Chrome 10-25, Safari 5.1-6 */
+  // background: linear-gradient(to top, #A7BFE8, #6190E8) /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+.my-card
+</style>
