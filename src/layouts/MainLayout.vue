@@ -45,7 +45,7 @@
 
             <q-item
               style="min-height: 0!important"
-              @click="logout"
+              
               clickable
               v-close-popup
             >
@@ -59,6 +59,7 @@
     </q-header>
 
     <q-drawer
+    style="color:#444"
       v-model="leftDrawerOpen"
       show-if-above
       bordered
@@ -79,19 +80,36 @@
           icon="perm_identity"
           label="Bookings"
         >
-          <q-item clickable tag="a" target="_blank" :href="link">
+          <q-item to="/booking/today" class="q-ml-md" clickable  >
             <q-item-section avatar>
               <q-icon name="person" />
             </q-item-section>
+
+            <q-item-section>
+              <q-item-label>Today's Booking</q-item-label>
+            </q-item-section>
           </q-item>
-          <q-card>
-            <q-card-section>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem,
-              eius reprehenderit eos corrupti commodi magni quaerat ex numquam,
-              dolorum officiis modi facere maiores architecto suscipit iste
-              eveniet doloribus ullam aliquid.
-            </q-card-section>
-          </q-card>
+
+           <q-item to="/booking/active" class="q-ml-md" clickable  >
+            <q-item-section avatar>
+              <q-icon name="person" />
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label>Active Booking</q-item-label>
+            </q-item-section>
+          </q-item>
+
+           <q-item to="/bookings" class="q-ml-md" clickable  >
+            <q-item-section avatar>
+              <q-icon name="person" />
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label>Bookings</q-item-label>
+            </q-item-section>
+          </q-item>
+        
         </q-expansion-item>
       </q-list>
     </q-drawer>
@@ -110,48 +128,18 @@ const linksData = [
     title: "Home",
 
     icon: "school",
-    link: "https://quasar.dev"
+    link: "/admin"
   },
   {
     title: "Parking Zones",
 
     icon: "school",
-    link: "https://quasar.dev"
+    link: "/parking-zones"
   },
   {
     title: "Clients",
     icon: "code",
-    link: "https://github.com/quasarframework"
-  },
-  {
-    title: "Discord Chat Channel",
-    caption: "chat.quasar.dev",
-    icon: "chat",
-    link: "https://chat.quasar.dev"
-  },
-  {
-    title: "Forum",
-    caption: "forum.quasar.dev",
-    icon: "record_voice_over",
-    link: "https://forum.quasar.dev"
-  },
-  {
-    title: "Twitter",
-    caption: "@quasarframework",
-    icon: "rss_feed",
-    link: "https://twitter.quasar.dev"
-  },
-  {
-    title: "Facebook",
-    caption: "@QuasarFramework",
-    icon: "public",
-    link: "https://facebook.quasar.dev"
-  },
-  {
-    title: "Quasar Awesome",
-    caption: "Community Quasar projects",
-    icon: "favorite",
-    link: "https://awesome.quasar.dev"
+    link: "/clients"
   }
 ];
 

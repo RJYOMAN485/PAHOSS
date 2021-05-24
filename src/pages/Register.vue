@@ -17,7 +17,7 @@
       <q-card-section>
         <q-form @submit="submitForm" class="q-gutter-md">
           <q-input
-            v-model="formData.email"
+            v-model="formData.name"
             :rules="[val => (val && val.length > 0) || 'Please type something']"
             color="purple-12"
             label="Name"
@@ -99,56 +99,6 @@
               <q-icon name="lock" />
             </template>
           </q-input>
-
-          <!-- <q-input
-            v-model="formData.email"
-            :rules="[val => (val && val.length > 0) || 'Please type something']"
-            color="purple-12"
-            label="Email"
-            type="email"
-          >
-            <template v-slot:prepend>
-              <q-icon name="email" />
-            </template>
-          </q-input>
-
-          <q-input
-            :rules="[val => (val && val.length > 0) || 'Please type something']"
-            type="password"
-            color="purple-12"
-            label="Password"
-            v-model="formData.password"
-          >
-            <template v-slot:prepend>
-              <q-icon name="lock" />
-            </template>
-          </q-input>
-
-          <q-radio
-            required
-            v-model="formData.roles"
-            color="secondary"
-            val="admin"
-            label="Admin"
-          />
-          <q-radio
-            required
-            v-model="formData.roles"
-            color="secondary"
-            val="guest"
-            label="Guest"
-          /> -->
-
-          <!-- <div> -->
-          <q-btn
-            label="Login"
-            class="full-width"
-            :loading="loading"
-            @click="submitForm"
-            type="submit"
-            color="secondary"
-          />
-          <!-- </div> -->
         </q-form>
 
         <div class="text-green q-mt-md" style="max-width:430px;display:flex">
@@ -203,9 +153,12 @@ export default {
       errors: [],
 
       formData: {
+        name: "",
         email: "",
         password: "",
-        device_name: "browser",
+        contact: "",
+        car_type: "",
+        roles: "user",
         gender: "female"
       },
       error: {}

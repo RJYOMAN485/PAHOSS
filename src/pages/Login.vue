@@ -11,9 +11,6 @@
         <div class="text-h6 text-center">User Login</div>
       </q-card-section>
 
-      <q-card-section class="bg-red-5 q-mt-sm" v-if="this.errorMessage">
-        <div class="text-white text-weight-light">{{ this.errorMessage }}</div>
-      </q-card-section>
       <q-card-section>
         <q-form @submit="submitForm" class="q-gutter-md">
           <q-input
@@ -44,7 +41,7 @@
           <q-btn
             label="Login"
             class="full-width"
-            :loading="loading"
+            
             @click="submitForm"
             type="submit"
             color="secondary"
@@ -72,27 +69,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
-import { mapState } from "vuex";
-import axios from "axios";
 export default {
-  computed: {
-    ...mapState("store", ["errorMessage"])
-  },
-
-  // created() {
-  //   axios
-  //     .get(this.$store.state.store.APP_URL + "user")
-  //     .then(response => {
-  //       // return true;
-  //     })
-  //     .catch(err => {
-  //       console.error = () => {};
-
-  //       console.log("not logged", err.message);
-  //     });
-  // },
-
   data() {
     return {
       name: null,
@@ -104,10 +81,10 @@ export default {
       errors: [],
 
       formData: {
-        email: "",
-        password: "",
-        device_name: "browser",
-        gender: "female"
+        email: "rj@gmail.com",
+        password: "password",
+        roles: 'user'
+       
       },
       error: {}
     };
@@ -118,7 +95,7 @@ export default {
       this.loading = true;
       console.log("submitted");
 
-      localStorage.removeItem("token");
+      // localStorage.removeItem("token");
       // this.loginUser(this.formData)
 
       await this.$axios
@@ -129,38 +106,10 @@ export default {
             .post("http://127.0.0.1:8000/login", this.formData)
             .then(response => {
               // return console.log(response.data);
-              this.loading = false;
-
-              // localStorage.setItem('token',response.data)
-              console.log("server response", response.data);
-
-              // this.$store.commit('setUserDetails',response.data);
-
-              this.loginUser(response.data);
-
-              console.log("userDetails", this.$store.state.store.userDetails);
-              if (response.data.roles == "admin")
-                this.$router.replace("/dashboard");
-              else {
-                console.log("redirect to validate");
-                this.$router.replace("/validate-lisence");
-              }
-              // console.log(response.data);
-              console.log(
-                "store email",
-                this.$store.state.store.userDetails.email
-              );
+              console.log(response.data);
             })
             .catch(error => {
-              // return console.log(error.message);
-              this.loading = false;
-              this.errors = error.response.data.errors;
-              this.$q.notify({
-                message: error.message,
-                color: "red-4",
-                position: "top",
-                icon: "warning"
-              });
+              console.log(error.message);
             });
         });
     }

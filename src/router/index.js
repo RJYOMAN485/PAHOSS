@@ -1,15 +1,22 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import * as VueGoogleMaps from 'vue2-google-maps'
+import AxiosPlugin from 'vue-axios-cors';
+
 
 
 import routes from './routes'
 
 Vue.use(VueRouter)
 
+Vue.use(AxiosPlugin)
+
+
+
+
 Vue.use(VueGoogleMaps, {
   load: {
-    key: 'AIzaSyCHlv2-IEah4gf37BYM4AwRaVghr9WHqTY',
+    key: 'AIzaSyDDXkzEIj9sB3J_ohqT0woVWqAJQiyRmAE',
     libraries: 'places', // This is required if you use the Autocomplete plugin
     // OR: libraries: 'places,drawing'
     // OR: libraries: 'places,drawing,visualization'

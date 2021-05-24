@@ -3,7 +3,7 @@
     <div class="row justify-center">
       <div style="color:#444" class="col-6 col-xs-10 text-body2">
         Select Location or 
-         <q-input class="q-ml-md" style="display:inline-grid" dense  v-model="text" label="Enter PIN Code" />
+         <q-input class="q-ml-md" style="display:inline-grid" dense  label="Enter PIN Code" />
          <q-btn outline rounded color="secondary" class="q-ml-md" label="Search"/>
       </div>
       
