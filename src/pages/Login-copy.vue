@@ -71,7 +71,7 @@ export default {
   mounted() {
      this.$axios.defaults.withCredentials = true;
     this.$axios
-      .get("http://pahoss.herokuapp.com/api/user", this.formData)
+      .get("http://127.0.0.1:8000/api/user", this.formData)
       .then(response => {
         // return console.log(response.data);
         console.log(response.data);
@@ -96,7 +96,7 @@ export default {
         roles: "user"
       },
       error: {},
-      url: "http://pahoss.herokuapp.com"
+      url: "http://127.0.0.1:8000"
     };
   },
 
@@ -110,11 +110,11 @@ export default {
       // this.loginUser(this.formData)
 
       await this.$axios
-        .get("http://pahoss.herokuapp.com/sanctum/csrf-cookie")
+        .get("http://127.0.0.1:8000/sanctum/csrf-cookie")
         .then(response => {
           // console.log(response);
           this.$axios
-            .post("http://pahoss.herokuapp.com/login", this.formData)
+            .post("http://127.0.0.1:8000/login", this.formData)
             .then(response => {
               // return console.log(response.data);
               console.log(response.data);
@@ -126,7 +126,7 @@ export default {
 
       // this.$axios.defaults.withCredentials = false;
         this.$axios
-      .get("http://pahoss.herokuapp.com/api/user", this.formData)
+      .get("http://127.0.0.1:8000/api/user", this.formData)
       .then(response => {
         // return console.log(response.data);
         console.log('auth2',response.data);

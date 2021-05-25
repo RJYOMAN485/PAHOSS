@@ -37,7 +37,9 @@
           :opened="infoWindow.open"
           @closeclick="infoWindow.open = false"
         >
-          <div v-html="infoWindow.template"></div>
+          <div>
+            <q-btn label="vbook" color="red"/>
+          </div>
         </gmap-info-window>
       </gmap-map>
       

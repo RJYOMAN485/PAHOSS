@@ -71,17 +71,17 @@ module.exports = function(/* ctx */) {
       host: "127.0.0.1", // opens browser window automatically
       proxy: {
         "/api": {
-          target: "http://127.0.0.1:8000",
+          target: "http://pahoss.herokuapp.com",
           changeOrigin: true,
           pathRewrite: {
             "^/api": ""
           }
         },
-        "api2": {
+        "/api": {
           target: "http://127.0.0.1:8000",
           changeOrigin: true,
           pathRewrite: {
-            "^/api2": ""
+            "^/api": ""
           }
         }
       }

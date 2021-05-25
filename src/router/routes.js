@@ -54,6 +54,13 @@ const routes = [
 
       
       },
+      {
+        path: "/parking/new",
+        component: () => import("src/pages/AddParking.vue"),
+        meta: { authRequired: true },
+
+      
+      },
 
       {
         path: "/booking/today",

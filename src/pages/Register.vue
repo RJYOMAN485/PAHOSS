@@ -11,13 +11,11 @@
         <div class="text-h6 text-center">User Registration</div>
       </q-card-section>
 
-      <q-card-section class="bg-red-5 q-mt-sm" v-if="this.errorMessage">
-        <div class="text-white text-weight-light">{{ this.errorMessage }}</div>
-      </q-card-section>
       <q-card-section>
-        <q-form @submit="submitForm" class="q-gutter-md">
+        <q-form @submit.prevent="submitForm" class="q-gutter-md">
           <q-input
             v-model="formData.name"
+            lazy-rules
             :rules="[val => (val && val.length > 0) || 'Please type something']"
             color="purple-12"
             label="Name"
@@ -29,10 +27,26 @@
 
           <q-input
             v-model="formData.email"
+            lazy-rules
             :rules="[val => (val && val.length > 0) || 'Please type something']"
             color="purple-12"
-            label="Mobile no"
+            label="Email"
             type="email"
+          >
+            <template v-slot:prepend>
+              <q-icon name="email" />
+            </template>
+          </q-input>
+
+          <q-input
+            v-model="formData.contact"
+            :rules="[
+              val =>
+                (val && val.length == 10) || 'Mobile number must be 10 digit'
+            ]"
+            color="purple-12"
+            label="Mobile no"
+            type="number"
           >
             <template v-slot:prepend>
               <q-icon name="call" />
@@ -40,7 +54,7 @@
           </q-input>
 
           <q-input
-            v-model="formData.email"
+            v-model="formData.car_type"
             :rules="[val => (val && val.length > 0) || 'Please type something']"
             color="purple-12"
             label="Car type"
@@ -50,23 +64,29 @@
             </template>
           </q-input>
 
-          <q-radio
-            required
-            v-model="formData.gender"
-            color="secondary"
-            val="male"
-            label="Male"
-          />
-          <q-radio
-            required
-            v-model="formData.gender"
-            color="secondary"
-            val="female"
-            label="Female"
-          />
+          <div style="display:flex">
+            <div class="q-mr-sm">Sex</div>
+            <q-radio
+              dense
+              required
+              v-model="formData.gender"
+              color="secondary"
+              val="male"
+              label="Male"
+            />
+            <q-radio
+              class="q-ml-sm"
+              dense
+              required
+              v-model="formData.gender"
+              color="secondary"
+              val="female"
+              label="Female"
+            />
+          </div>
 
           <q-input
-            v-model="formData.email"
+            v-model="formData.address"
             :rules="[val => (val && val.length > 0) || 'Please type something']"
             color="purple-12"
             label="Address"
@@ -77,7 +97,7 @@
           </q-input>
 
           <q-input
-            v-model="formData.email"
+            v-model="formData.password"
             :rules="[val => (val && val.length > 0) || 'Please type something']"
             color="purple-12"
             label="Password"
@@ -89,16 +109,27 @@
           </q-input>
 
           <q-input
-            v-model="formData.email"
-            :rules="[val => (val && val.length > 0) || 'Please type something']"
+            v-model="formData.confirmPassword"
+            :rules="[
+              val =>
+                this.formData.password == this.formData.confirmPassword ||
+                'Password do not match'
+            ]"
             color="purple-12"
             label="Confirm Password"
-            type="email"
+            type="password"
           >
             <template v-slot:prepend>
               <q-icon name="lock" />
             </template>
           </q-input>
+
+          <q-btn
+            label="Register"
+            class="full-width"
+            type="submit"
+            color="secondary"
+          />
         </q-form>
 
         <div class="text-green q-mt-md" style="max-width:430px;display:flex">
@@ -121,27 +152,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
-import { mapState } from "vuex";
-import axios from "axios";
 export default {
-  computed: {
-    ...mapState("store", ["errorMessage"])
-  },
-
-  // created() {
-  //   axios
-  //     .get(this.$store.state.store.APP_URL + "user")
-  //     .then(response => {
-  //       // return true;
-  //     })
-  //     .catch(err => {
-  //       console.error = () => {};
-
-  //       console.log("not logged", err.message);
-  //     });
-  // },
-
   data() {
     return {
       name: null,
@@ -153,11 +164,13 @@ export default {
       errors: [],
 
       formData: {
-        name: "",
-        email: "",
-        password: "",
-        contact: "",
-        car_type: "",
+        name: "dummy",
+        email: "dummy@gmail.com",
+        password: "password",
+        contact: "8999999999",
+        address: "ITI Veng",
+        car_type: "XUV",
+        confirmPassword: "password",
         roles: "user",
         gender: "female"
       },
@@ -170,50 +183,19 @@ export default {
       this.loading = true;
       console.log("submitted");
 
+      // return;
+
       localStorage.removeItem("token");
       // this.loginUser(this.formData)
+      this.$axios.defaults.withCredentials = true;
 
       await this.$axios
-        .get("http://127.0.0.1:8000/sanctum/csrf-cookie")
+        .post("http://127.0.0.1:8000/api/storeuser", this.formData)
         .then(response => {
-          // console.log(response);
-          this.$axios
-            .post("http://127.0.0.1:8000/login", this.formData)
-            .then(response => {
-              // return console.log(response.data);
-              this.loading = false;
-
-              // localStorage.setItem('token',response.data)
-              console.log("server response", response.data);
-
-              // this.$store.commit('setUserDetails',response.data);
-
-              this.loginUser(response.data);
-
-              console.log("userDetails", this.$store.state.store.userDetails);
-              if (response.data.roles == "admin")
-                this.$router.replace("/dashboard");
-              else {
-                console.log("redirect to validate");
-                this.$router.replace("/validate-lisence");
-              }
-              // console.log(response.data);
-              console.log(
-                "store email",
-                this.$store.state.store.userDetails.email
-              );
-            })
-            .catch(error => {
-              // return console.log(error.message);
-              this.loading = false;
-              this.errors = error.response.data.errors;
-              this.$q.notify({
-                message: error.message,
-                color: "red-4",
-                position: "top",
-                icon: "warning"
-              });
-            });
+          console.log(response.data);
+        })
+        .catch(err => {
+          console.log("error message:", err.message);
         });
     }
   }

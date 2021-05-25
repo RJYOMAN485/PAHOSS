@@ -84,11 +84,13 @@
       </q-card>
     </q-dialog>
     <q-markup-table flat bordered>
-      <thead class="bg-teal">
+      <thead class="bg-grey">
         <tr>
           <th colspan="6">
             <div class="row no-wrap items-center">
               <div class="text-h5 q-ml-md text-white">Parking Zones</div>
+              <q-space />
+              <q-btn to="/parking/new" dense icon="add" color="green" label="New Parking" />
             </div>
           </th>
         </tr>

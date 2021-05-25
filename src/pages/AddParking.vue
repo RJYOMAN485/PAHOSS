@@ -4,43 +4,77 @@
       <div class="col-6 col-lg-6 col-xs-12">
         <q-card>
           <q-card-section class="row items-center q-pb-none">
-            <div class="text-h6">Update Parking</div>
+            <div class="text-h6">Add Parking</div>
             <q-space />
           </q-card-section>
 
-          <q-form class="q-gutter-md q-pa-lg">
-            <q-input v-model="location" dense color="secondary" label="Name">
-            </q-input>
+          <q-form @submit.prevent="onSubmit" class="q-gutter-md q-pa-lg">
+            <div class="q-ml-sm row q-col-gutter-md">
+              <div class="col-sm-6 col-xs-12">
+                <q-input
+                  v-model="formData.location"
+                  dense
+                  color="secondary"
+                  label="Name"
+                  :rules="[
+                    val => (val && val.length > 0) || 'Please type something'
+                  ]"
+                />
+              </div>
+              <div class="col-sm-6 col-xs-12">
+                <q-input
+                  v-model="formData.postal"
+                  dense
+                  color="secondary"
+                  label="Postal"
+                  :rules="[
+                    val => (val && val.length == 6) || 'Length should be six'
+                  ]"
+                />
+              </div>
+            </div>
 
-            <div style="display:flex">
-              <q-input dense v-model="lat" color="secondary" label="Latitude">
-              </q-input>
-              <q-input
-                v-model="lng"
-                class="q-ml-sm"
-                dense
-                color="secondary"
-                label="Longitude"
-              >
-              </q-input>
+            <div class="q-ml-sm row q-col-gutter-md">
+              <div class="col-sm-6 col-xs-12">
+                <q-input
+                  dense
+                  v-model="formData.lat"
+                  color="secondary"
+                  label="Latitude"
+                  :rules="[val => (val && val > 0) || 'Please type something']"
+                >
+                </q-input>
+              </div>
+              <div class="col-sm-6 col-xs-12">
+                <q-input
+                  v-model="formData.lng"
+                  dense
+                  color="secondary"
+                  label="Longitude"
+                  :rules="[val => (val && val > 0) || 'Please type something']"
+                >
+                </q-input>
+              </div>
             </div>
 
             <q-input
+              v-model="formData.available_space"
               dense
               type="number"
               color="secondary"
               label="Available space"
+              :rules="[val => (val && val > 0) || 'Please type something']"
             >
             </q-input>
 
             <q-select
-              v-model="model"
+              v-model="formData.available_time"
               :options="options"
               label="Available time"
             />
             <div>
               <q-btn
-                label="Update"
+                label="Add"
                 class="full-width"
                 type="submit"
                 color="secondary"
@@ -98,11 +132,16 @@ export default {
       mapOptions: {
         disableDefaultUI: true
       },
-      location: "",
-      lat: "",
-      lng: "",
 
-      model: null,
+      formData: {
+        location: "",
+        lat: "null",
+        lng: "null",
+        postal: "888888",
+        available_space: 6,
+        available_time: null
+      },
+
       options: ["Morning", "Morning-Afternoon", "Night"]
     };
   },
@@ -112,6 +151,24 @@ export default {
     // this.panToMarker();
   },
   methods: {
+    onSubmit() {
+      this.$axios.defaults.withCredentials = true;
+      console.log("submitted");
+
+      this.$axios
+        // .get("http://pahoss.herokuapp.com/sanctum/csrf-cookie")
+        // .then(response => {
+          this.$axios
+            .post("http://pahoss.herokuapp.com/api/storeparking", this.formData)
+            .then(response => {
+              // return console.log(response.data);
+              console.log(response.data);
+            })
+            .catch(error => {
+              console.log(error.message);
+            });
+        // });
+    },
     //detects location from browser
     geolocate() {
       navigator.geolocation.getCurrentPosition(position => {
@@ -127,8 +184,8 @@ export default {
     },
 
     getCityAndCountry() {
-      this.lat = this.marker.position.lat;
-      this.lng = this.marker.position.lng;
+      this.formData.lat = this.marker.position.lat;
+      this.formData.lng = this.marker.position.lng;
       console.log(this.marker.position.lat);
       // axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 
@@ -139,7 +196,8 @@ export default {
         .get(apiUrl)
         .then(result => {
           console.log("address", result.data);
-          this.location = result.data.city + "," + result.data.region;
+          this.formData.location = result.data.city + "," + result.data.region;
+          // this.postal = result.data.postal
         })
         .catch(err => {
           console.log(err);
@@ -160,7 +218,7 @@ export default {
     //Moves the marker to click position on the map
     handleMapClick(e) {
       this.marker.position = { lat: e.latLng.lat(), lng: e.latLng.lng() };
-      console.log(e);
+      // console.log('before lat',e);
       this.getCityAndCountry();
     }
   }
