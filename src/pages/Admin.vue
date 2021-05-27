@@ -10,7 +10,7 @@
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-center"
-              ><strong>10</strong>
+              ><strong>{{ this.dashboard.total_bookings }}</strong>
             </q-item-label>
             <q-item-label class="text-center">
               Total Booking
@@ -33,7 +33,9 @@
             </q-avatar>
           </q-item-section>
           <q-item-section>
-            <q-item-label class="text-center"><strong>4</strong> </q-item-label>
+            <q-item-label class="text-center"
+              ><strong>{{ dashboard.todays_booking }}</strong>
+            </q-item-label>
             <q-item-label class="text-center">
               Today's Booking
             </q-item-label>
@@ -55,7 +57,9 @@
             </q-avatar>
           </q-item-section>
           <q-item-section>
-            <q-item-label class="text-center"><strong>4</strong> </q-item-label>
+            <q-item-label class="text-center"
+              ><strong>{{ dashboard.active_booking }}</strong>
+            </q-item-label>
             <q-item-label class="text-center">
               Active Booking
             </q-item-label>
@@ -77,7 +81,9 @@
             </q-avatar>
           </q-item-section>
           <q-item-section>
-            <q-item-label class="text-center"><strong>4</strong> </q-item-label>
+            <q-item-label class="text-center"
+              ><strong>{{ dashboard.release_booking }}</strong>
+            </q-item-label>
             <q-item-label class="text-center">
               Release Booking
             </q-item-label>
@@ -99,7 +105,9 @@
             </q-avatar>
           </q-item-section>
           <q-item-section>
-            <q-item-label class="text-center"><strong>4</strong> </q-item-label>
+            <q-item-label class="text-center"
+              ><strong>{{ dashboard.total_clients }}</strong>
+            </q-item-label>
             <q-item-label class="text-center">
               Total Clients
             </q-item-label>
@@ -121,9 +129,11 @@
             </q-avatar>
           </q-item-section>
           <q-item-section>
-            <q-item-label class="text-center"><strong>4</strong> </q-item-label>
+            <q-item-label class="text-center"
+              ><strong>{{ dashboard.total_parkings }}</strong>
+            </q-item-label>
             <q-item-label class="text-center">
-              Total Slots
+              Total Parkings
             </q-item-label>
           </q-item-section>
         </q-item>
@@ -153,7 +163,7 @@
           <tr>
             <th colspan="8">
               <div class="row no-wrap items-center">
-                <div class="text-h5 q-ml-md text-white">Today's Booking</div>
+                <div class="text-h5 text-white">Today's Booking</div>
               </div>
             </th>
           </tr>
@@ -163,21 +173,21 @@
             <th class="text-right">Email</th>
             <th class="text-right">Address</th>
             <th class="text-right">Car type</th>
-            <th class="text-right">Entry Time</th>
-            <th class="text-right">Exit Time</th>
+            <th class="text-right">Entry date/time</th>
+            <th class="text-right">Exit date/time</th>
             <th class="text-right">Status</th>
           </tr>
         </thead>
         <tbody style="color: #555555" class="bg-grey-3">
-          <tr>
-            <td class="text-left">Frozen Yogurt</td>
-            <td class="text-right">159</td>
-            <td class="text-right">6</td>
-            <td class="text-right">24</td>
-            <td class="text-right">4</td>
-            <td class="text-right">24</td>
-            <td class="text-right">4</td>
-            <td class="text-right">active</td>
+          <tr v-for="recent in dashboard.recents" :key="recent.id">
+            <td class="text-left">{{ recent.name }}</td>
+            <td class="text-right">{{ recent.contact }}</td>
+            <td class="text-right">{{ recent.email }}</td>
+            <td class="text-right">{{ recent.address }}</td>
+            <td class="text-right">{{ recent.car_type }}</td>
+            <td class="text-right">{{ recent.entry_date }} {{ recent.entry_time }}</td>
+            <td class="text-right">{{ recent.exit_date }} {{ recent.exit_time }}</td>
+            <td :class="recent.status=='active' ? 'text-green' :'text-red' " class="text-right">{{ recent.status }}</td>
           </tr>
         </tbody>
       </q-markup-table>
@@ -186,7 +196,24 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      dashboard: {}
+    };
+  },
+  mounted() {
+    this.$axios
+      .get("http://127.0.0.1:8000/api/dashboard")
+      .then(response => {
+        this.dashboard = response.data;
+        console.log("dashboard", this.dashboard);
+      })
+      .catch(error => {
+        console.log("error", error.message);
+      });
+  }
+};
 </script>
 
 <style></style>

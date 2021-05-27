@@ -1,6 +1,6 @@
 <template>
   <div class="q-mt-lg">
-    <div v-if="show == 0" class="row justify-center">
+    <div v-if="show == 0" class="row text-center justify-center">
       <div style="color:#444" class="col-6 col-xs-10 text-body2">
         Select Location or
         <q-input
@@ -19,14 +19,18 @@
       </div>
     </div>
 
-    <div class="row q-mt-md q-pa-md justify-center q-gutter-md">
-      <div v-if="show == 0" class="col-md-10 col-sm-8 col-xs-12 col-lg-8">
+    <div class="row q-pa-md justify-center q-gutter-md">
+      <div v-if="show == 0" class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
+        <q-card-section>
+            <div class="text-caption"
+              >Markers with <span><q-icon color="red" size="md" name="room" /></span> are the parking zones. Hover over to book (Refresh the page if no markers showed)</div>
+          </q-card-section>
         <gmap-map
           class="col-6 col-xs-10"
           ref="mapRef"
           :center="center"
           :zoom="16"
-          style="width:80%;  height: 400px;"
+          style="width:100%;  height: 400px;"
         >
           <gmap-marker
             :key="index"
@@ -473,30 +477,30 @@ export default {
         // lat: 21.1594627,
         this.lng = position.coords.longitude;
 
-        this.markers = [
-          {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-            label: "Salem Veng"
-          },
-          {
-            lat: 23.72031668265584,
-            lng: 92.72720575332642,
-            label: "Aizawl"
-          }
-        ];
+        // this.markers = [
+        //   {
+        //     lat: position.coords.latitude,
+        //     lng: position.coords.longitude,
+        //     label: "Salem Veng"
+        //   },
+        //   {
+        //     lat: 23.72031668265584,
+        //     lng: 92.72720575332642,
+        //     label: "Aizawl"
+        //   }
+        // ];
 
-        // this.parking_zones.forEach(zone => {
-        //   console.log('zone',zone);
-        //   let marker = {
-        //     lat: zone.lat,
-        //     lng: zone.lng,
-        //     label: "Hahaha"
-        //   };
-        //   this.markers = [...this.markers,marker];
+        this.parking_zones.forEach(zone => {
+          console.log('zone',zone);
+          let marker = {
+            lat: parseFloat(zone.lat),
+            lng: parseFloat(zone.lng),
+            label: zone.pname
+          };
+          this.markers = [...this.markers,marker];
 
-        //   console.log('allmarker',this.markers);
-        // });
+          console.log('allmarker',this.markers);
+        });
       });
 
       this.getCityAndCountry();
@@ -506,7 +510,7 @@ export default {
     onBook() {
       let formData = {
         user_id: 18,
-        parking_id: 2,
+        parking_id: 5,
         entry_date: this.entryDate,
         entry_time: this.entryTime,
         exit_date: this.exitDate,

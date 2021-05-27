@@ -105,7 +105,7 @@
       </thead>
       <tbody style="color: #555555" class="bg-grey-3">
         <tr v-for="booking in bookings" :key="booking.id">
-          <td class="text-left">{{ booking.name }}</td>
+          <td class="text-left">{{ booking.pname }}</td>
           <td class="text-right">
             {{ booking.entry_date }} {{ booking.entry_time }}
           </td>
@@ -117,12 +117,13 @@
 
           <td class="text-right">
             <q-btn
+              :disable="booking.status=='cancelled'"
               size="sm"
               round
               flat
               class="bg-grey-3 customBtn"
               color="red-3"
-              icon="close"
+              :icon="booking.status=='active' ? 'close' : 'block'"
               @click="setCancelId(booking.id)"
             />
           </td>
@@ -135,7 +136,7 @@
 export default {
   mounted() {
     this.$axios
-      .get("http://127.0.0.1:8000/api/booking/18")
+      .get("http://127.0.0.1:8000/api/bookingid/18")
       .then(response => {
         this.bookings = response.data;
         console.log(this.bookings);
@@ -163,10 +164,15 @@ export default {
       this.$axios
         .post("http://127.0.0.1:8000/api/cancel", formData)
         .then(response => {
-          this.bookings = response.data;
-          console.log(this.bookings);
+          this.getBookings();
         })
         .catch(error => {
+          this.$q.notify({
+            message: error.message,
+            color: "red-4",
+            position: "top",
+            icon: "warning"
+          });
           console.log("error", error.message);
         });
     },

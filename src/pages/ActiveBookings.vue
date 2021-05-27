@@ -4,12 +4,17 @@
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="warning" color="secondary" text-color="white" />
-          <span class="q-ml-sm">Are you sure you want to delete ?</span>
+          <span class="q-ml-sm">Are you sure? Cancel booking</span>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn flat label="Cancel" color="secondary" v-close-popup />
-          <q-btn label="Confirm" color="red-5" v-close-popup />
+          <q-btn
+            label="Confirm"
+            @click="cancel()"
+            color="red-5"
+            v-close-popup
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -81,46 +86,47 @@
     <q-markup-table flat bordered>
       <thead class="bg-teal">
         <tr>
-          <th colspan="9">
+          <th colspan="10">
             <div class="row no-wrap items-center">
-              <div class="text-h5 q-ml-md text-white">Active Booking</div>
+              <div class="text-h5 text-white">Active Bookings</div>
             </div>
           </th>
         </tr>
         <tr style="color: #444">
           <th class="text-left">Name</th>
-          <th class="text-right">Contact</th>
-          <th class="text-right">Email</th>
-          <th class="text-right">Address</th>
-          <th class="text-right">Car type</th>
-          <th class="text-right">Entry Time</th>
-          <th class="text-right">Exit Time</th>
+          <th class="text-left">Parking Name</th>
+          <th class="text-right">Entry date & time</th>
+          <th class="text-right">Exit date & time</th>
+
           <th class="text-right">Amount</th>
-        
+          <th class="text-right">Status</th>
+
           <th class="text-right">Actions</th>
         </tr>
       </thead>
       <tbody style="color: #555555" class="bg-grey-3">
-        <tr>
-          <td class="text-left">Frozen Yogurt</td>
-          <td class="text-right">159</td>
-          <td class="text-right">6</td>
-          <td class="text-right">24</td>
-          <td class="text-right">4</td>
-          <td class="text-right">24</td>
-          
-          <td class="text-right">active</td>
+        <tr v-for="booking in bookings" :key="booking.id">
+          <td class="text-left">{{ booking.name }}</td>
+          <td class="text-left">{{ booking.pname }}</td>
+          <td class="text-right">
+            {{ booking.entry_date }} {{ booking.entry_time }}
+          </td>
+          <td class="text-right">
+            {{ booking.exit_date }} {{ booking.exit_time }}
+          </td>
+          <td class="text-right">{{ booking.amount }}</td>
+          <td :class="booking.status=='active' ? 'text-green' :'text-red' " class="text-right">{{ booking.status }}</td>
 
-          <td class="text-right">4</td>
           <td class="text-right">
             <q-btn
+              :disable="booking.status=='cancelled'"
               size="sm"
               round
               flat
               class="bg-grey-3 customBtn"
               color="red-3"
-              icon="delete"
-              @click="confirm = true"
+              :icon="booking.status=='active' ? 'close' : 'block'"
+              @click="setCancelId(booking.id)"
             />
           </td>
         </tr>
@@ -130,11 +136,76 @@
 </template>
 <script>
 export default {
+  mounted() {
+    this.$axios
+      .get("http://127.0.0.1:8000/api/booking/active")
+      .then(response => {
+        this.bookings = response.data;
+        console.log(this.bookings);
+      })
+      .catch(error => {
+        console.log("error", error.message);
+      });
+  },
   data() {
     return {
       edit: false,
-      confirm: false
+      confirm: false,
+      bookings: [],
+      cancelId: null
     };
+  },
+  methods: {
+    cancel() {
+      console.log("cancel");
+      // return;
+      let formData = {
+        id: this.cancelId
+      };
+
+      this.$axios
+        .post("http://127.0.0.1:8000/api/cancel", formData)
+        .then(response => {
+          this.getBookings();
+        })
+        .catch(error => {
+          this.$q.notify({
+            message: error.message,
+            color: "red-4",
+            position: "top",
+            icon: "warning"
+          });
+          console.log("error", error.message);
+        });
+    },
+
+    getBookings() {
+      this.$axios
+        .get("http://127.0.0.1:8000/api/booking/today")
+        .then(response => {
+          this.bookings = response.data;
+          console.log(this.bookings);
+        })
+        .catch(error => {
+          console.log("error", error.message);
+        });
+    },
+    setCancelId(id) {
+      this.cancelId = id;
+      this.confirm = true;
+      // let formData = {
+      //   id: id
+      // };
+      // this.$axios
+      //   .post("http://127.0.0.1:8000/api/cancel", formData)
+      //   .then(response => {
+      //     this.bookings = response.data;
+      //     console.log(this.bookings);
+      //   })
+      //   .catch(error => {
+      //     console.log("error", error.message);
+      //   });
+    }
   }
 };
 </script>

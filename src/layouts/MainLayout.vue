@@ -39,7 +39,7 @@
               </q-item-section>
             </q-item>
 
-            <q-item
+            <!-- <q-item
               style="min-height: 0!important"
               to="/admin"
               clickable
@@ -48,7 +48,7 @@
               <q-item-section>
                 <q-item-label>Roles</q-item-label>
               </q-item-section>
-            </q-item>
+            </q-item> -->
 
             <q-item style="min-height: 0!important" clickable v-close-popup>
               <q-item-section>

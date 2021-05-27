@@ -71,6 +71,10 @@
               v-model="formData.available_time"
               :options="options"
               label="Available time"
+              required
+              :rules="[
+                val => (val && val.length > 0) || 'Please type something'
+              ]"
             />
             <div>
               <q-btn
@@ -154,19 +158,32 @@ export default {
       this.$axios.defaults.withCredentials = true;
       console.log("submitted");
 
+      this.$axios;
+      // .get("http://pahoss.herokuapp.com/sanctum/csrf-cookie")
+      // .then(response => {
       this.$axios
-        // .get("http://pahoss.herokuapp.com/sanctum/csrf-cookie")
-        // .then(response => {
-          this.$axios
-            .post("http://pahoss.herokuapp.com/api/storeparking", this.formData)
-            .then(response => {
-              // return console.log(response.data);
-              console.log(response.data);
-            })
-            .catch(error => {
-              console.log(error.message);
-            });
-        // });
+        .post("http://127.0.0.1:8000/api/storeparking", this.formData)
+        .then(response => {
+          console.log(response.data);
+          this.$q.notify({
+            message: "Added Successful",
+            color: "green",
+            position: "top",
+            icon: "thumb_up"
+          });
+
+          this.$router.push("/parking-zones");
+        })
+        .catch(error => {
+          console.log(error.message);
+          this.$q.notify({
+            message: error.message,
+            color: "red-4",
+            position: "top",
+            icon: "warning"
+          });
+        });
+      // });
     },
     //detects location from browser
     geolocate() {
@@ -187,6 +204,8 @@ export default {
       this.formData.lng = this.marker.position.lng;
       console.log(this.marker.position.lat);
       // axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+
+      // https://maps.googleapis.com/maps/api/geocode/json?latlng=23.724265253426005,92.72666931152344&key=AIzaSyDDXkzEIj9sB3J_ohqT0woVWqAJQiyRmAE
 
       let apiUrl = `http://geocode.xyz/${this.marker.position.lat},${this.marker.position.lng} ?json=1`;
       this.$axios.defaults.withCredentials = false;

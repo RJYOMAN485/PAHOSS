@@ -157,14 +157,14 @@ export default {
             position: "top",
             icon: "thumb_up"
           });
-          this.$axios
-            .post("http://127.0.0.1:8000/logout")
-            .then(response => {
-              this.$router.push("/login");
-            })
-            .catch(err => {
-              console.log(err);
-            });
+          // this.$axios
+          //   .post("http://127.0.0.1:8000/logout")
+          //   .then(response => {
+          //     this.$router.push("/login");
+          //   })
+          //   .catch(err => {
+          //     console.log(err);
+          //   });
         })
         .catch(err => {
           console.log(err.message);
