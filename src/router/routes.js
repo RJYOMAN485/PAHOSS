@@ -17,7 +17,7 @@ const routes = [
       },
       {
         path: "/bookslot",
-        component: () => import("pages/Booking.vue"),
+        component: () => import("src/pages/BookingOri.vue"),
         meta: { requireGuest: true },
         
       },
@@ -81,6 +81,23 @@ const routes = [
       {
         path: "/bookings/",
         component: () => import("src/pages/Bookings.vue"),
+        meta: { authRequired: true },
+
+      
+      },
+
+
+      {
+        path: "/mybookings/",
+        component: () => import("src/pages/MyBookings.vue"),
+        meta: { authRequired: true },
+
+      
+      },
+
+      {
+        path: "/contact/",
+        component: () => import("src/pages/Contact.vue"),
         meta: { authRequired: true },
 
       

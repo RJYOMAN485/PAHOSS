@@ -1,5 +1,101 @@
 <template>
   <div class="row q-mt-md q-pa-md justify-center q-gutter-md">
+    <!-- <div > -->
+    <!-- <div v-if="!current" class="col-lg-4 col-sm-4 col-xs-12">
+      <q-card>
+        <q-card-section class="q-pb-none">
+          <div class="text-h6">Book Parking</div>
+          <q-space />
+        </q-card-section>
+        <q-form @submit.prevent="onSubmit" class="q-gutter-md q-pa-lg">
+          <div class="q-ml-sm row q-col-gutter-md">
+            <div class="col-sm-6 col-xs-12">
+              <q-input
+                v-model="formData.location"
+                dense
+                readonly
+                color="secondary"
+                label="Name"
+                :rules="[
+                  val => (val && val.length > 0) || 'Please type something'
+                ]"
+              />
+            </div>
+            <div class="col-sm-6 col-xs-12">
+              <q-input
+                readonly
+                v-model="formData.postal"
+                dense
+                color="secondary"
+                label="Postal"
+                :rules="[
+                  val => (val && val.length == 6) || 'Length should be six'
+                ]"
+              />
+            </div>
+          </div>
+          <div class="q-ml-sm row q-col-gutter-md">
+            <div class="col-sm-6 col-xs-12">
+              <q-input
+                readonly
+                dense
+                v-model="formData.lat"
+                color="secondary"
+                label="Latitude"
+                :rules="[val => (val && val > 0) || 'Please type something']"
+              >
+              </q-input>
+            </div>
+            <div class="col-sm-6 col-xs-12">
+              <q-input
+                readonly
+                v-model="formData.lng"
+                dense
+                color="secondary"
+                label="Longitude"
+                :rules="[val => (val && val > 0) || 'Please type something']"
+              >
+              </q-input>
+            </div>
+          </div>
+
+          <div>
+            <q-btn
+              label="Book"
+              class="full-width"
+              type="submit"
+              color="secondary"
+            />
+          </div>
+        </q-form>
+      </q-card>
+    </div> -->
+    <!-- <div v-if="!current" class="col-lg-6 col-sm-7 col-xs-12">
+      <q-card>
+        <q-card-section>
+          <small
+            >Click on the map to set a marker. (Location tracked
+            automatically.)</small
+          >
+        </q-card-section>
+        <gmap-map
+          :center="center"
+          :zoom="16"
+          map-style-id="roadmap"
+          style="width: 100%; height: 50vmin"
+          ref="mapRef"
+          @click="handleMapClick"
+        >
+          <gmap-marker
+            :position="marker.position"
+            :clickable="true"
+            :draggable="true"
+            @drag="handleMarkerDrag"
+            @click="panToMarker"
+          />
+        </gmap-map>
+      </q-card>
+    </div> -->
     <div v-if="!show" class="col-md-10 col-sm-8 col-xs-12 col-lg-8">
       <q-card>
         <q-card-section class="bg-primary text-white">
@@ -12,7 +108,12 @@
           </div>
           <div class="row justify-between">
             <div class="col-6">
-              <q-input label="Entry date" filled v-model="entryDate">
+              <q-input
+                label="Entry date"
+                filled
+                v-model="entryDate"
+                mask="date"
+              >
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy
@@ -24,7 +125,6 @@
                         @click="optionsFnTime3"
                         :options="optionsFn"
                         v-model="entryDate"
-                        mask="YYYY-MM-DD"
                       >
                         <div class="row items-center justify-end">
                           <q-btn
@@ -73,20 +173,21 @@
           </div>
           <div class="row justify-between">
             <div class="col-6">
-              <q-input readonly label="Exit date" filled v-model="exitDate">
+              <q-input
+                readonly
+                label="Exit date"
+                filled
+                v-model="exitDate"
+                mask="date"
+              >
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
-                    <!-- <q-popup-proxy
+                    <q-popup-proxy
                       ref="qDateProxy"
                       transition-show="scale"
                       transition-hide="scale"
                     >
-                      <q-date
-                        mask="YYYY-MM-DD"
-                        readonly
-                        :options="optionsFn"
-                        v-model="exitDate"
-                      >
+                      <q-date readonly :options="optionsFn" v-model="exitDate">
                         <div class="row items-center justify-end">
                           <q-btn
                             v-close-popup
@@ -96,7 +197,7 @@
                           />
                         </div>
                       </q-date>
-                    </q-popup-proxy> -->
+                    </q-popup-proxy>
                   </q-icon>
                 </template>
               </q-input>
@@ -141,7 +242,7 @@
             </div>
 
             <div class="col-5 text-weight-bold text-green q-mt-md">
-              Total Amount: {{ this.amount }}
+              Total Amount: 30
             </div>
           </div>
           <q-btn label="Continue" type="submit" color="secondary" />
@@ -236,47 +337,28 @@
 </template>
 
 <script>
-import Dashboard from './Dashboard'
 import { gmapApi } from "vue2-google-maps";
-import { date } from "quasar";
 
 export default {
-  components: {
-    Dashboard
-  },
   computed: {
     google: gmapApi
   },
   mounted() {
-    // console.log('addTime',new Date(new Date().getTime() + 10 * 60000))
-    let timeStamp = Date.now();
-    let formattedString = date.formatDate(timeStamp, "YYYY-MM-DD");
-
-    // console.log("timestamp", formattedString);
-
     this.optionsFnTime3();
+    var today = new Date();
 
-    // var today = new Date();
+    var add = "";
 
-    // var add = "";
+    console.log("today day" + today.getDate());
 
-    // console.log("today day" + today.getDate());
+    this.date = today.getFullYear() + "/0" + (today.getMonth() + 1) +"/" + today.getDate();
 
-    // this.date =
-    //   today.getFullYear() +
-    //   "-0" +
-    //   (today.getMonth() + 1) +
-    //   "-" +
-    //   today.getDate();
+    if (today.getDate() < 10) add = "0" 
+    else add = today.getDate();
 
-    // console.log("mounted", this.date);
+    this.entryDate = this.exitDate = this.date 
 
-    // if (today.getDate() < 10) add = "0";
-    // else add = today.getDate();
-
-    this.date = this.entryDate = this.exitDate = formattedString;
-
-    console.log("exit date: " + this.exitDate);
+    console.log("current date: " + this.date);
 
     this.geolocate();
   },
@@ -315,11 +397,17 @@ export default {
         available_space: 6,
         available_time: null
       },
-      amount: "",
 
       period: "30 minutes",
 
-      options: ["30 minutes", "1 Hour", "2 Hours", "5 Hours", "1 day"]
+      options: [
+        "30 minutes",
+        "1 Hour",
+        "2 Hours",
+        "5 Hours",
+        "5 Hours",
+        "1 day"
+      ]
     };
   },
   methods: {
@@ -348,7 +436,6 @@ export default {
 
       //  console.log('result',hr+min);
       if (this.period == "30 minutes") {
-        this.amount = 30;
         let m = Number(min) + 30;
 
         console.log("plus", m);
@@ -378,30 +465,24 @@ export default {
           this.exitTime = hr + ":" + (Number(min) + 30);
         }
       } else if (this.period == "1 Hour") {
-        this.amount = 60;
         let m = Number(hr) + 1;
 
         if (m < 10) m = "0" + m;
 
         this.exitTime = m + ":" + min;
       } else if (this.period == "2 Hours") {
-        this.amount = 120;
         let m = Number(hr) + 2;
 
         if (m < 10) m = "0" + m;
 
         this.exitTime = m + ":" + min;
       } else if (this.period == "5 Hours") {
-        this.amount = 300;
         let m = Number(hr) + 5;
 
         if (m < 10) m = "0" + m;
 
         this.exitTime = m + ":" + min;
       } else if (this.period == "1 day") {
-        this.amount = 720;
-
-        this.exitTime = this.entryTime;
         var day = this.entryDate.substring(
           this.exitDate.length - 2,
           this.exitDate.length
@@ -427,7 +508,10 @@ export default {
 
         console.log("month", month);
 
-        this.exitDate = year + "-" + month + "-" + day;
+        this.exitDate = year + "/" + month + "/" + day;
+
+        // this.exitDate.repla;
+        // console.log("date", str);
       }
       // console.log(this.exitTime);
       // var str = ("index", this.time.indexOf(":"));
@@ -435,30 +519,9 @@ export default {
       // return hr > this.time.substring(0, str) || hr % 12 === 0;
 
       // return 10 + 1;
-
-      console.log("optonsfn", this.exitDate);
     },
 
     getPayment() {
-      let timeStamp = Date.now();
-      let formattedString = date.formatDate(timeStamp, "YYYY-MM-DD");
-
-      // if (date.isSameDate(this.entryDate,formattedString))
-      //   console.log('match');
-      // else
-      // console.log('not match');
-
-      if (this.entryDate < formattedString) {
-        this.$q.notify({
-          message: 'Entry time should not be less than current date',
-          color: "red-4",
-          position: "top",
-          icon: "warning"
-        });
-
-        return
-      }
-
       // var entry = ("index", this.entryTime.indexOf(":"));
 
       // var exit = ("index", this.exitTime.indexOf(":"));
@@ -472,11 +535,11 @@ export default {
       //     "Exit time should be atleast 1 hr greaterr than entry time";
       //   return;
       // }
-      // return;
+
       this.show = true;
     },
     optionsFn(date) {
-      console.log("options fn", this.date);
+      console.log('options date',this.date);
       return date >= this.date;
       var today = new Date();
 

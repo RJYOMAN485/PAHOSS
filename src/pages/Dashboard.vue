@@ -8,7 +8,7 @@
 import GoogleMap from '../components/GoogleMap'
 
 export default {
-  name: 'App',
+  name: 'Dashboard',
   components: {
     GoogleMap
   }

@@ -88,7 +88,6 @@
         <p>Location: {{ location }}</p> -->
         <q-card>
           <q-card-section>
-            <div class="text-h6">Our Changing Planet</div>
             <small
               >Click on the map to set a marker. (Location tracked
               automatically.)</small

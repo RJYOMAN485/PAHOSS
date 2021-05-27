@@ -69,7 +69,7 @@
 <script>
 export default {
   mounted() {
-     this.$axios.defaults.withCredentials = true;
+    this.$axios.defaults.withCredentials = true;
     this.$axios
       .get("http://pahoss.herokuapp.com/api/user", this.formData)
       .then(response => {
@@ -93,7 +93,7 @@ export default {
       formData: {
         email: "rj@gmail.com",
         password: "password",
-        roles: "user"
+        // roles: "user"
       },
       error: {},
       url: "http://pahoss.herokuapp.com"
@@ -109,31 +109,31 @@ export default {
       // localStorage.removeItem("token");
       // this.loginUser(this.formData)
 
-      await this.$axios
-        .get("http://pahoss.herokuapp.com/sanctum/csrf-cookie")
+      await this.$axios;
+      // .get("http://pahoss.herokuapp.com/sanctum/csrf-cookie")
+      // .then(response => {
+      // console.log(response);
+      this.$axios
+        .post('https://gabbyblog.herokuapp.com/', this.formData)
         .then(response => {
-          // console.log(response);
-          this.$axios
-            .post("http://pahoss.herokuapp.com/login", this.formData)
-            .then(response => {
-              // return console.log(response.data);
-              console.log(response.data);
-            })
-            .catch(error => {
-              console.log(error.message);
-            });
+          // return console.log(response.data);
+          console.log(response.data);
+        })
+        .catch(error => {
+          console.log(error.message);
         });
+      // });
 
       // this.$axios.defaults.withCredentials = false;
-        this.$axios
-      .get("http://pahoss.herokuapp.com/api/user", this.formData)
-      .then(response => {
-        // return console.log(response.data);
-        console.log('auth2',response.data);
-      })
-      .catch(error => {
-        console.log('auth 2',error.message);
-      });
+      this.$axios
+        .get("http://pahoss.herokuapp.com/api/user", this.formData)
+        .then(response => {
+          // return console.log(response.data);
+          console.log("auth2", response.data);
+        })
+        .catch(error => {
+          console.log("auth 2", error.message);
+        });
     }
   }
 };

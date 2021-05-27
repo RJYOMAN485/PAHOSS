@@ -15,9 +15,16 @@
           PAHOSS Smart Parking
         </q-toolbar-title>
 
-        <q-btn rounded flat label="Bookings" />
-        <q-btn rounded flat label="Contact" />
-        <q-btn rounded flat label="Know More" />
+        <q-item to="/mybookings" class="q-ml-md" clickable>
+          <q-item-section>
+            <q-item-label>Bookings</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item to="/contact" class="q-ml-md" clickable>
+          <q-item-section>
+            <q-item-label>Contact us</q-item-label>
+          </q-item-section>
+        </q-item>
 
         <q-btn-dropdown rounded flat icon="account_circle" color="white">
           <q-list class="q-pa-sm">
@@ -43,12 +50,7 @@
               </q-item-section>
             </q-item>
 
-            <q-item
-              style="min-height: 0!important"
-              
-              clickable
-              v-close-popup
-            >
+            <q-item style="min-height: 0!important" clickable v-close-popup>
               <q-item-section>
                 <q-item-label>Logout</q-item-label>
               </q-item-section>
@@ -59,7 +61,7 @@
     </q-header>
 
     <q-drawer
-    style="color:#444"
+      style="color:#444"
       v-model="leftDrawerOpen"
       show-if-above
       bordered
@@ -80,7 +82,7 @@
           icon="perm_identity"
           label="Bookings"
         >
-          <q-item to="/booking/today" class="q-ml-md" clickable  >
+          <q-item to="/booking/today" class="q-ml-md" clickable>
             <q-item-section avatar>
               <q-icon name="person" />
             </q-item-section>
@@ -90,7 +92,7 @@
             </q-item-section>
           </q-item>
 
-           <q-item to="/booking/active" class="q-ml-md" clickable  >
+          <q-item to="/booking/active" class="q-ml-md" clickable>
             <q-item-section avatar>
               <q-icon name="person" />
             </q-item-section>
@@ -100,7 +102,7 @@
             </q-item-section>
           </q-item>
 
-           <q-item to="/bookings" class="q-ml-md" clickable  >
+          <q-item to="/bookings" class="q-ml-md" clickable>
             <q-item-section avatar>
               <q-icon name="person" />
             </q-item-section>
@@ -109,7 +111,6 @@
               <q-item-label>Bookings</q-item-label>
             </q-item-section>
           </q-item>
-        
         </q-expansion-item>
       </q-list>
     </q-drawer>
