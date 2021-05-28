@@ -8,7 +8,7 @@
       style="max-width: 600px;border: 3px solid #26A69A;"
     >
       <q-card-section class="bg-grey-8 text-white">
-        <div class="text-h6 text-center">User Login</div>
+        <div class="text-h6 text-center">Admin Login</div>
       </q-card-section>
 
       <q-card-section>
@@ -48,20 +48,7 @@
           <!-- </div> -->
         </q-form>
 
-        <div class="text-green q-mt-md" style="max-width:430px;display:flex">
-          <small class=""
-            ><q-icon name="info" size="xs" />Already have an account ?
-            <q-btn
-              size="xs"
-              to="/register"
-              flat
-              color="blue"
-              dense
-              label="Register"
-            />
-            page instead
-          </small>
-        </div>
+
       </q-card-section>
     </q-card>
   </div>
@@ -95,9 +82,9 @@ export default {
       errors: [],
 
       formData: {
-        email: "rj@gmail.com",
+        email: "admim@pahoss.com",
         password: "password",
-        roles: "user"
+        roles: "admin"
       },
       error: {}
     };

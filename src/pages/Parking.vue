@@ -65,7 +65,7 @@
 
           <q-select
             dense
-            outlined
+            
             label="Available Time"
             v-model="editParking.available_time"
             lazy-rules

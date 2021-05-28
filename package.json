@@ -2,7 +2,7 @@
   "name": "smartparking",
   "version": "0.0.1",
   "description": "A Quasar Framework app",
-  "productName": "Quasar App",
+  "productName": "PAHOSS Smart Parking",
   "author": "Rj Chhetrii <rjxtri485@gmail.com>",
   "private": true,
   "scripts": {
@@ -19,7 +19,8 @@
     "quasar": "^1.0.0",
     "vue-axios-cors": "^1.0.1",
     "vue2-gmap-custom-marker": "^6.0.1",
-    "vue2-google-maps": "^0.10.7"
+    "vue2-google-maps": "^0.10.7",
+    "vuex-persistedstate": "^4.0.0-beta.3"
   },
   "devDependencies": {
     "@quasar/app": "^2.0.0",

@@ -193,18 +193,7 @@ export default {
     setCancelId(id) {
       this.cancelId = id;
       this.confirm = true;
-      // let formData = {
-      //   id: id
-      // };
-      // this.$axios
-      //   .post("http://127.0.0.1:8000/api/cancel", formData)
-      //   .then(response => {
-      //     this.bookings = response.data;
-      //     console.log(this.bookings);
-      //   })
-      //   .catch(error => {
-      //     console.log("error", error.message);
-      //   });
+     
     }
   }
 };

@@ -1,7 +1,7 @@
 <template>
   <div
     style="min-height:100vh;"
-    class="row flex flex-center q-gutter-md custombg"
+    class="row q-pa-md flex flex-center justify-center items-center q-gutter-md custombg"
   >
     <q-card
       class="my-card q-pa-md col"
@@ -192,10 +192,23 @@ export default {
       await this.$axios
         .post("http://127.0.0.1:8000/api/storeuser", this.formData)
         .then(response => {
-          console.log(response.data);
+          this.$q.notify({
+            message: "Register Successful",
+            color: "green",
+            position: "top",
+            icon: "thumb_up"
+          });
+
+          this.$router.push("/login");
         })
         .catch(err => {
           console.log("error message:", err.message);
+          this.$q.notify({
+            message: err,message,
+            color: "red-4",
+            position: "top",
+            icon: "warning"
+          });
         });
     }
   }

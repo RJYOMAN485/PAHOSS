@@ -135,22 +135,16 @@
 <script>
 export default {
   mounted() {
-    this.$axios
-      .get("http://127.0.0.1:8000/api/bookingid/18")
-      .then(response => {
-        this.bookings = response.data;
-        console.log(this.bookings);
-      })
-      .catch(error => {
-        console.log("error", error.message);
-      });
+    this.id = this.$store.state.store.userDetails.id;
+    this.getBookings()
   },
   data() {
     return {
       edit: false,
       confirm: false,
       bookings: [],
-      cancelId: null
+      cancelId: null,
+      id: null
     };
   },
   methods: {
@@ -179,7 +173,7 @@ export default {
 
     getBookings() {
       this.$axios
-        .get("http://127.0.0.1:8000/api/booking/18")
+        .get("http://127.0.0.1:8000/api/bookingid/"+this.id)
         .then(response => {
           this.bookings = response.data;
           console.log(this.bookings);

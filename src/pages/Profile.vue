@@ -119,6 +119,7 @@ export default {
     let target = {};
 
     this.user = Object.assign(target, this.$store.state.store.userDetails);
+    console.log('users',this.user);
 
   },
   data() {
@@ -150,6 +151,7 @@ export default {
       this.$axios
         .post(this.$store.state.store.APP_URL+"user/update", this.user)
         .then(response => {
+           this.loginUser(this.user);
           console.log(response.data);
           this.$q.notify({
             message: "Profile updated successfully",

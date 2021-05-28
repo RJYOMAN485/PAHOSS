@@ -3,28 +3,40 @@
     <div v-if="show == 0" class="row text-center justify-center">
       <div style="color:#444" class="col-6 col-xs-10 text-body2">
         Select Location or
-        <q-input
-          class="q-ml-md"
-          style="display:inline-grid"
-          dense
-          label="Enter PIN Code"
-        />
-        <q-btn
-          outline
-          rounded
-          color="secondary"
-          class="q-ml-md"
-          label="Search"
-        />
+        <q-form @submit="navigate">
+          <q-input
+            type="number"
+            v-model="pin"
+            class="q-ml-md"
+            style="display:inline-grid"
+            dense
+            label="Enter PIN Code"
+            :rules="[
+              val => (val && val.length == 6) || 'Postal code should be 6 digit'
+            ]"
+          />
+          <q-btn
+            outline
+            type="submit"
+            rounded
+            color="secondary"
+            class="q-ml-md"
+            label="Search"
+          />
+        </q-form>
       </div>
     </div>
 
     <div class="row q-pa-md justify-center q-gutter-md">
       <div v-if="show == 0" class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
         <q-card-section>
-            <div class="text-caption"
-              >Markers with <span><q-icon color="red" size="md" name="room" /></span> are the parking zones. Hover over to book (Refresh the page if no markers showed)</div>
-          </q-card-section>
+          <div class="text-caption">
+            Markers with
+            <span><q-icon color="red" size="md" name="room"/></span> are the
+            parking zones. Hover over to book (Refresh the page if no markers
+            showed)
+          </div>
+        </q-card-section>
         <gmap-map
           class="col-6 col-xs-10"
           ref="mapRef"
@@ -279,7 +291,12 @@
                 <q-icon name="person" color="grey" />
               </template>
             </q-input>
-            <q-btn label="Book now" type="submit" color="secondary" />
+            <q-btn
+              label="Book now"
+              :loading="loading"
+              type="submit"
+              color="secondary"
+            />
             <q-btn
               label="Back"
               flat
@@ -289,6 +306,71 @@
             />
           </q-form>
           <q-separator />
+        </q-card>
+      </div>
+
+      <div v-if="show == 3" class="col-md-10 col-sm-8 col-xs-12 col-lg-8">
+        <q-card class="q-pa-md" flat bordered>
+          <q-card-section horizontal>
+            <div class="gt-xs col-4 text-center text-caption q-mt-lg">
+              <div class="q-mt-lg text-h5 text-weight-thin">
+                Provide Feedback
+              </div>
+              <img
+                width="200px"
+                src="https://preview.colorlib.com/theme/bootstrap/contact-form-16/images/undraw-contact.svg"
+              />
+            </div>
+            <!-- <q-seperator /> -->
+            <q-card-section class="col">
+              <q-form
+                @click.stop=""
+                @submit.prevent="onFeedback()"
+                class="q-gutter-md q-pa-md"
+              >
+                <div class="row  q-pa-lg q-col-gutter-xs">
+                  <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
+                    <q-input
+                      rounded
+                      v-model="message"
+                      type="textarea"
+                      outlined
+                      dense
+                      color="secondary"
+                      placeholder="Write your message"
+                      :rules="[
+                        val =>
+                          (val && val.length > 0) || 'Please type something'
+                      ]"
+                    >
+                    </q-input>
+
+                    <div style="display:flex">
+                      <q-btn
+                        type="submit"
+                        rounded
+                        outline
+                        style="color: #26A69A;;"
+                        label="Submit"
+                        icon="done"
+                      />
+                      <q-btn
+                        @click="skip()"
+                        class="q-ml-sm"
+                        rounded
+                        outline
+                        style="color: #26A69A;;"
+                        label="Skip"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- <div class="col-md-6 col-sm-8 col-xs-12 col-lg-5"> -->
+                  <!-- </div> -->
+                </div>
+              </q-form>
+            </q-card-section>
+          </q-card-section>
         </q-card>
       </div>
     </div>
@@ -317,6 +399,7 @@ export default {
       },
       parking_zones: [],
       address: "",
+      pin: null,
 
       entryDate: null,
       entryTime: "08:56",
@@ -354,9 +437,17 @@ export default {
 
       amount: null,
 
+      message: "",
+
+      parking_id: null,
+
       selectedLocation: "",
 
       period: "30 minutes",
+
+      mail: {},
+
+      loading: false,
 
       options: ["30 minutes", "1 Hour", "2 Hours", "5 Hours", "1 day"]
     };
@@ -377,6 +468,13 @@ export default {
 
     this.geolocate();
 
+    this.mail = {
+      email: "ujjali485@gmail.com",
+      book_id: 12
+    };
+
+    console.log("mail", this.mail);
+
     // this.$refs.mapRef.$mapPromise.then(map => {
     //   map.panTo({ lat: 1.38, lng: 103.8 });
     // });
@@ -386,8 +484,98 @@ export default {
       this.currentPlace = place;
     },
 
+    navigate() {
+      let postal = {
+        postal: this.pin
+      };
+      console.log("nav");
+      this.$axios
+        .post("http://127.0.0.1:8000/api/postal", postal)
+        .then(response => {
+          console.log(response.data);
+          this.markers = [];
+          response.data.forEach(zone => {
+            console.log("zone", zone);
+            let marker = {
+              lat: parseFloat(zone.lat),
+              lng: parseFloat(zone.lng),
+              label: zone.pname
+            };
+            this.markers = [...this.markers, marker];
+
+            console.log("allmarker", this.markers);
+          });
+        })
+        .catch(error => {
+          console.log("error", error.message);
+          this.$q.notify({
+            message: error.message,
+            color: "red-4",
+            position: "top",
+            icon: "warning"
+          });
+        });
+
+      // this.getCityAndCountry();
+
+      this.panToMarker();
+    },
+
+    sendMail() {
+      // return
+      this.$axios
+        .post("http://127.0.0.1:8000/api/postmail", this.mail)
+        .then(response => {
+          console.log(response.data);
+          this.$q.notify({
+            message: "Booking Success. Check your email for booking id",
+            color: "green",
+            position: "top",
+            icon: "thumb_up"
+          });
+          this.loading = false;
+          // this.$router.replace("/mybookings");
+        })
+        .catch(error => {
+          console.log("error", error.message);
+          this.$q.notify({
+            message:
+              "Unable to send send booking id to email.Make sure your email is correct",
+            color: "red-4",
+            position: "top",
+            icon: "warning"
+          });
+          this.loading = false;
+          // this.$router.replace("/mybookings");
+        });
+    },
+
+    onFeedback() {
+      let formData = {
+        user_id: 18,
+        message: this.message
+      };
+      // return
+      this.$axios
+        .post("http://127.0.0.1:8000/api/feedback", formData)
+        .then(response => {
+          console.log(response.data);
+          this.$router.replace("/mybookings");
+        })
+        .catch(error => {
+          console.log("error", error.message);
+          this.$router.replace("/mybookings");
+        });
+    },
+
+    skip() {
+      this.$router.replace("/mybookings");
+    },
+
     setLocation() {
       this.show = 1;
+
+      // console.log('parking id',m.id);
 
       // this.addre = ''
     },
@@ -397,7 +585,8 @@ export default {
     },
 
     openInfoWindowTemplate(m) {
-      console.log("mouse over");
+      this.parking_id = m.id;
+      console.log("mouse over", m);
       this.address = m.label;
       // const { lat, lng, name, street, zip, city } = this.loadedDealers[index];
       this.infoWindow.position = { lat: m.lat, lng: m.lng };
@@ -477,47 +666,38 @@ export default {
         // lat: 21.1594627,
         this.lng = position.coords.longitude;
 
-        // this.markers = [
-        //   {
-        //     lat: position.coords.latitude,
-        //     lng: position.coords.longitude,
-        //     label: "Salem Veng"
-        //   },
-        //   {
-        //     lat: 23.72031668265584,
-        //     lng: 92.72720575332642,
-        //     label: "Aizawl"
-        //   }
-        // ];
-
         this.parking_zones.forEach(zone => {
-          console.log('zone',zone);
+          console.log("zone", zone);
           let marker = {
             lat: parseFloat(zone.lat),
             lng: parseFloat(zone.lng),
-            label: zone.pname
+            label: zone.pname,
+            id: zone.id
           };
-          this.markers = [...this.markers,marker];
+          this.markers = [...this.markers, marker];
 
-          console.log('allmarker',this.markers);
+          console.log("allmarker", this.markers);
         });
       });
 
-      this.getCityAndCountry();
+      // this.getCityAndCountry();
 
       this.panToMarker();
     },
     onBook() {
       let formData = {
-        user_id: 18,
-        parking_id: 5,
+        user_id: this.$store.state.store.userDetails.id,
+        parking_id: this.parking_id,
         entry_date: this.entryDate,
         entry_time: this.entryTime,
         exit_date: this.exitDate,
         exit_time: this.exitTime,
         amount: this.amount,
+        email: this.$store.state.store.userDetails.email,
         status: "active"
       };
+
+      this.loading = true;
 
       // console.log(formData);
       // return
@@ -526,10 +706,27 @@ export default {
         .then(response => {
           // return console.log(response.data);
           console.log("success", response.data);
-          this.$router.replace("/mybookings");
+
+          this.$q.notify({
+            message: "Booking Success. Check your email for booking id",
+            color: "green",
+            position: "top",
+            icon: "thumb_up"
+          });
+          // this.sendMail();
+          this.loading = false;
+          this.show = 3;
         })
         .catch(error => {
+          this.loading = false;
           console.log("error", error.message);
+          this.$q.notify({
+            message:
+              "Unable to send send booking id to email.Make sure your email is correct",
+            color: "red-4",
+            position: "top",
+            icon: "warning"
+          });
         });
 
       //redirect
@@ -667,20 +864,6 @@ export default {
         return;
       }
 
-      // var entry = ("index", this.entryTime.indexOf(":"));
-
-      // var exit = ("index", this.exitTime.indexOf(":"));
-
-      // let entryCheck = this.entryTime.substring(0, entry);
-
-      // let exitCheck = this.exitTime.substring(0, exit);
-
-      // if (entryCheck == exitCheck) {
-      //   this.validateExit =
-      //     "Exit time should be atleast 1 hr greaterr than entry time";
-      //   return;
-      // }
-      // return;
       this.show = 2;
     },
     optionsFn(date) {

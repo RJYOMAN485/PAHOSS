@@ -3,13 +3,22 @@
 
 const state = {
   userDetails : {
-    id: '18',
-    name: 'dummy',
-    email: 'rj@gmail.com',
-    roles: 'user'
+    id: null,
+    name: null,
+    email: null,
+    roles: null
 
 
   },
+
+  // userDetails : {
+  //   id: '18',
+  //   name: 'dummy',
+  //   email: 'ujjali485@gmail.com',
+  //   roles: 'user'
+
+
+  // },
   errorMessage: null,
   activeLisence: [],
   expiredLisence: [],
