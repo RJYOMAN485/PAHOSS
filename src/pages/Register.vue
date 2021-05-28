@@ -190,7 +190,7 @@ export default {
       this.$axios.defaults.withCredentials = true;
 
       await this.$axios
-        .post("http://127.0.0.1:8000/api/storeuser", this.formData)
+        .post("storeuser", this.formData)
         .then(response => {
           this.$q.notify({
             message: "Register Successful",
@@ -199,7 +199,7 @@ export default {
             icon: "thumb_up"
           });
 
-          this.$router.push("/login");
+          this.$router.push("/login/user");
         })
         .catch(err => {
           console.log("error message:", err.message);

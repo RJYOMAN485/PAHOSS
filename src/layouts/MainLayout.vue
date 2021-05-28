@@ -28,12 +28,12 @@
           </router-link>
           <q-space/>
 
-        <q-item to="/mybookings" class="q-ml-md" clickable>
+        <q-item  v-if="roles == 'user'" to="/mybookings" class="q-ml-md" clickable>
           <q-item-section>
             <q-item-label>Bookings</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item to="/contact" class="q-ml-md" clickable>
+        <q-item  v-if="roles == 'user'" to="/contact" class="q-ml-md" clickable>
           <q-item-section>
             <q-item-label>Contact us</q-item-label>
           </q-item-section>
@@ -168,6 +168,10 @@ const linksData = [
 ];
 
 export default {
+  beforeMount() {
+    if (this.$route.fullPath == "/") this.$router.push("/dashboard");
+    console.log('before mount');
+  },
   created() {
     if (this.$route.fullPath == "/") this.$router.push("/dashboard");
 

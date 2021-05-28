@@ -74,10 +74,9 @@ export default {
   methods: {
     getClients() {
       this.$axios
-        .get("http://127.0.0.1:8000/api/clients")
+        .get("clients")
         .then(response => {
           this.formDatas = response.data;
-          console.log("formdata", this.formDatas);
         })
         .catch(error => {
           console.log("error", error.message);
@@ -90,7 +89,7 @@ export default {
     deleteUser() {
      
       this.$axios
-        .post("http://127.0.0.1:8000/api/user/delete", this.del)
+        .post("user/delete", this.del)
         .then(response => {
           this.getClients();
         })

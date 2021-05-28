@@ -166,10 +166,10 @@ export default {
     },
     getParking() {
       this.$axios
-        .get("http://127.0.0.1:8000/api/parking-zones")
+        .get("parking-zones")
         .then(response => {
           this.parkings = response.data;
-          console.log(this.parkings);
+        
         })
         .catch(error => {
           console.log("error", error.message);
@@ -192,7 +192,7 @@ export default {
       };
       console.log("delete");
       this.$axios
-        .post("http://127.0.0.1:8000/api/delete-parking", formData)
+        .post("delete-parking", formData)
         .then(response => {
           this.getParking();
         })
@@ -208,7 +208,7 @@ export default {
     },
     onUpdate() {
       this.$axios
-        .post("http://127.0.0.1:8000/api/update-parking", this.editParking)
+        .post("update-parking", this.editParking)
         .then(response => {
           // this.parkings = response.data;
           this.$q.notify({

@@ -38,16 +38,8 @@ const routes = [
             });
         }
       },
-      {
-        path: "/closebuy",
-        component: () => import("pages/CloseBuy.vue"),
-        meta: { requireGuest: true }
-      },
-      {
-        path: "/bookslot",
-        component: () => import("src/pages/BookingOri.vue"),
-        meta: { requireGuest: true }
-      },
+     
+     
       {
         path: "/feedback",
         component: () => import("src/pages/Feedback.vue"),

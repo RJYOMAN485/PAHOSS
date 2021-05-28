@@ -204,10 +204,10 @@ export default {
   },
   mounted() {
     this.$axios
-      .get("http://127.0.0.1:8000/api/dashboard")
+      .get("dashboard")
       .then(response => {
         this.dashboard = response.data;
-        console.log("dashboard", this.dashboard);
+       
       })
       .catch(error => {
         console.log("error", error.message);

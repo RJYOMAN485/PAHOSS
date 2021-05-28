@@ -62,7 +62,7 @@ export default {
     this.getUser();
     this.$axios.defaults.withCredentials = true;
     this.$axios
-      .get("http://127.0.0.1:8000/api/user", this.formData)
+      .get("user", this.formData)
       .then(response => {
         // return console.log(response.data);
         console.log("auth", response.data);

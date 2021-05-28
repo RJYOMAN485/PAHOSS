@@ -119,7 +119,7 @@ export default {
     let target = {};
 
     this.user = Object.assign(target, this.$store.state.store.userDetails);
-    console.log('users',this.user);
+  
 
   },
   data() {
@@ -139,7 +139,6 @@ export default {
   methods: {
     ...mapActions("store", ["loginUser"]),
     onSubmit() {
-      console.log("submitted");
       if (
         (this.user.password || this.user.password_confirmation) &&
         this.user.password !== this.user.password_confirmation
@@ -149,7 +148,7 @@ export default {
       }
       this.error = "";
       this.$axios
-        .post(this.$store.state.store.APP_URL+"user/update", this.user)
+        .post('user/update', this.user)
         .then(response => {
            this.loginUser(this.user);
           console.log(response.data);
@@ -159,14 +158,7 @@ export default {
             position: "top",
             icon: "thumb_up"
           });
-          // this.$axios
-          //   .post("http://127.0.0.1:8000/logout")
-          //   .then(response => {
-          //     this.$router.push("/login");
-          //   })
-          //   .catch(err => {
-          //     console.log(err);
-          //   });
+         
         })
         .catch(err => {
           console.log(err.message);

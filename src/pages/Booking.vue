@@ -459,61 +459,16 @@ export default {
         return
       }
 
-      // var entry = ("index", this.entryTime.indexOf(":"));
-
-      // var exit = ("index", this.exitTime.indexOf(":"));
-
-      // let entryCheck = this.entryTime.substring(0, entry);
-
-      // let exitCheck = this.exitTime.substring(0, exit);
-
-      // if (entryCheck == exitCheck) {
-      //   this.validateExit =
-      //     "Exit time should be atleast 1 hr greaterr than entry time";
-      //   return;
-      // }
-      // return;
+     
       this.show = true;
     },
     optionsFn(date) {
       console.log("options fn", this.date);
       return date >= this.date;
-      var today = new Date();
-
-      var dt =
-        today.getFullYear() +
-        "/" +
-        (today.getMonth() + 1) +
-        "/" +
-        today.getDate();
-      console.log("date: ", dt);
-
-      return (
-        date >=
-        today.getFullYear() + "/" + today.getMonth + "/" + today.getDate()
-      );
+     
     },
 
-    onSubmit() {
-      this.$axios.defaults.withCredentials = true;
-      console.log("submitted");
-
-      this.$axios;
-      // .get("http://pahoss.herokuapp.com/sanctum/csrf-cookie")
-      // .then(response => {
-      this.$axios
-        .post("http://pahoss.herokuapp.com/api/storeparking", this.formData)
-        .then(response => {
-          // return console.log(response.data);
-          console.log(response.data);
-        })
-        .catch(error => {
-          console.log(error.message);
-        });
-
-      this.current = 1;
-      // });
-    },
+   
     //detects location from browser
     geolocate() {
       navigator.geolocation.getCurrentPosition(position => {

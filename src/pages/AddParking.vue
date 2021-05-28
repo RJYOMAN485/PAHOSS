@@ -162,7 +162,7 @@ export default {
       // .get("http://pahoss.herokuapp.com/sanctum/csrf-cookie")
       // .then(response => {
       this.$axios
-        .post("http://127.0.0.1:8000/api/storeparking", this.formData)
+        .post("storeparking", this.formData)
         .then(response => {
           console.log(response.data);
           this.$q.notify({
@@ -202,7 +202,7 @@ export default {
     getCityAndCountry() {
       this.formData.lat = this.marker.position.lat;
       this.formData.lng = this.marker.position.lng;
-      console.log(this.marker.position.lat);
+    
       // axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 
       // https://maps.googleapis.com/maps/api/geocode/json?latlng=23.724265253426005,92.72666931152344&key=AIzaSyDDXkzEIj9sB3J_ohqT0woVWqAJQiyRmAE
@@ -213,7 +213,7 @@ export default {
       this.$axios
         .get(apiUrl)
         .then(result => {
-          console.log("address", result.data);
+          
           this.formData.location = result.data.city + "," + result.data.region;
           // this.postal = result.data.postal
         })

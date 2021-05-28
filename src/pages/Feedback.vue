@@ -28,9 +28,9 @@ export default {
   methods: {
     getFeedbacks() {
       this.$axios
-        .get("http://127.0.0.1:8000/api/feedbacks", this.formData)
+        .get("feedbacks", this.formData)
         .then(response => {
-          console.log(response.data);
+          
           this.feedbacks = response.data
         })
         .catch(error => {

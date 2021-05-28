@@ -30,7 +30,7 @@
     <div class="row q-pa-md justify-center q-gutter-md">
       <div v-if="show == 0" class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
         <q-card-section>
-          <div class="text-caption">
+          <div class="text-caption text-center">
             Markers with
             <span><q-icon color="red" size="md" name="room"/></span> are the
             parking zones. Hover over to book (Refresh the page if no markers
@@ -41,7 +41,7 @@
           class="col-6 col-xs-10"
           ref="mapRef"
           :center="center"
-          :zoom="16"
+          :zoom="13"
           style="width:100%;  height: 400px;"
         >
           <gmap-marker
@@ -179,23 +179,7 @@
               <div class="col-5">
                 <q-input readonly v-model="exitTime" label="Exit time" filled>
                   <template v-slot:append>
-                    <q-icon name="access_time" class="cursor-pointer">
-                      <q-popup-proxy
-                        transition-show="scale"
-                        transition-hide="scale"
-                      >
-                        <q-time readonly v-model="exitTime">
-                          <div class="row items-center justify-end">
-                            <q-btn
-                              v-close-popup
-                              label="Close"
-                              color="primary"
-                              flat
-                            />
-                          </div>
-                        </q-time>
-                      </q-popup-proxy>
-                    </q-icon>
+                    <q-icon name="access_time" class="cursor-pointer"> </q-icon>
                   </template>
                 </q-input>
                 <!-- <small class="text-red" v-if="validateExit">
@@ -490,7 +474,7 @@ export default {
       };
       console.log("nav");
       this.$axios
-        .post("http://127.0.0.1:8000/api/postal", postal)
+        .post("postal", postal)
         .then(response => {
           console.log(response.data);
           this.markers = [];
@@ -524,7 +508,7 @@ export default {
     sendMail() {
       // return
       this.$axios
-        .post("http://127.0.0.1:8000/api/postmail", this.mail)
+        .post("postmail", this.mail)
         .then(response => {
           console.log(response.data);
           this.$q.notify({
@@ -557,7 +541,7 @@ export default {
       };
       // return
       this.$axios
-        .post("http://127.0.0.1:8000/api/feedback", formData)
+        .post("feedback", formData)
         .then(response => {
           console.log(response.data);
           this.$router.replace("/mybookings");
@@ -631,22 +615,11 @@ export default {
       console.log("leave");
       this.infoWindow.open = false;
     },
-    //   geolocate() {
-    //   navigator.geolocation.getCurrentPosition(position => {
-    //     this.marker.position = {
-    //       lat: position.coords.latitude,
-    //       lng: position.coords.longitude
-    //     };
 
-    //     this.getCityAndCountry();
-
-    //     this.panToMarker();
-    //   });
-    // },
     geolocate: function() {
       console.log("test");
       this.$axios
-        .get("http://127.0.0.1:8000/api/parking-zones")
+        .get("parking-zones")
         .then(response => {
           this.parking_zones = response.data;
           console.log("parking-zones", response.data);
@@ -655,6 +628,11 @@ export default {
           console.log("error", error.message);
         });
       navigator.geolocation.getCurrentPosition(position => {
+        console.log("lat: " + position.coords.latitude);
+        console.log("lng: " + position.coords.longitude);
+
+        // lat: 23.7206042,
+        // lng: 92.728546
         this.center = {
           lat: position.coords.latitude,
           // lat: 21.1594627,
@@ -702,7 +680,7 @@ export default {
       // console.log(formData);
       // return
       this.$axios
-        .post("http://127.0.0.1:8000/api/storebooking", formData)
+        .post("storebooking", formData)
         .then(response => {
           // return console.log(response.data);
           console.log("success", response.data);
@@ -728,12 +706,6 @@ export default {
             icon: "warning"
           });
         });
-
-      //redirect
-      // this.$q.loading.show({
-      //   message:
-      //     'Booking in process.<br/><span class="text-orange text-weight-bold">Hang on...</span>'
-      // });
     },
 
     showCurrent() {
@@ -826,20 +798,10 @@ export default {
 
         var month = this.entryDate.substring(5, 7);
 
-        //  if(month < 10) {
-        //   month = '0'+month
-        // }
-
         console.log("month", month);
 
         this.exitDate = year + "-" + month + "-" + day;
       }
-      // console.log(this.exitTime);
-      // var str = ("index", this.time.indexOf(":"));
-
-      // return hr > this.time.substring(0, str) || hr % 12 === 0;
-
-      // return 10 + 1;
 
       console.log("optonsfn", this.exitDate);
     },
@@ -847,11 +809,6 @@ export default {
     getPayment() {
       let timeStamp = Date.now();
       let formattedString = date.formatDate(timeStamp, "YYYY-MM-DD");
-
-      // if (date.isSameDate(this.entryDate,formattedString))
-      //   console.log('match');
-      // else
-      // console.log('not match');
 
       if (this.entryDate < formattedString) {
         this.$q.notify({
@@ -889,9 +846,6 @@ export default {
       this.$axios.defaults.withCredentials = true;
       console.log("submitted");
 
-      // this.$axios;
-      // .get("http://pahoss.herokuapp.com/sanctum/csrf-cookie")
-      // .then(response => {
       this.$axios
         .post("http://pahoss.herokuapp.com/api/storeparking", this.formData)
         .then(response => {

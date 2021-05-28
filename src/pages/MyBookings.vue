@@ -117,7 +117,7 @@
 
           <td class="text-right">
             <q-btn
-              :disable="booking.status=='cancelled'"
+              :disable="booking.status !== 'active'"
               size="sm"
               round
               flat
@@ -156,7 +156,7 @@ export default {
       };
 
       this.$axios
-        .post("http://127.0.0.1:8000/api/cancel", formData)
+        .post("cancel", formData)
         .then(response => {
           this.getBookings();
         })
@@ -173,10 +173,10 @@ export default {
 
     getBookings() {
       this.$axios
-        .get("http://127.0.0.1:8000/api/bookingid/"+this.id)
+        .get("bookingid/"+this.id)
         .then(response => {
           this.bookings = response.data;
-          console.log(this.bookings);
+        
         })
         .catch(error => {
           console.log("error", error.message);
@@ -185,18 +185,7 @@ export default {
     setCancelId(id) {
       this.cancelId = id;
       this.confirm = true;
-      // let formData = {
-      //   id: id
-      // };
-      // this.$axios
-      //   .post("http://127.0.0.1:8000/api/cancel", formData)
-      //   .then(response => {
-      //     this.bookings = response.data;
-      //     console.log(this.bookings);
-      //   })
-      //   .catch(error => {
-      //     console.log("error", error.message);
-      //   });
+     
     }
   }
 };
