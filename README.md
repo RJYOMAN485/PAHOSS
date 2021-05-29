@@ -14,7 +14,7 @@ npm install -g @quasar/cli
 
 
 ## Make sure you have nodejs and npm installed
-See [Configuring quasar.conf.js](https://nodejs.org/en/).
+See [Download Nodejs](https://nodejs.org/en/).
 
 
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
