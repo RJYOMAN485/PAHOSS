@@ -22,6 +22,7 @@
             color="secondary"
             class="q-ml-md"
             label="Search"
+            :loading="searchLoading"
           />
         </q-form>
       </div>
@@ -38,6 +39,7 @@
           </div>
         </q-card-section>
         <gmap-map
+          v-if="isMounted"
           class="col-6 col-xs-10"
           ref="mapRef"
           :center="center"
@@ -297,9 +299,7 @@
         <q-card class="q-pa-md" flat bordered>
           <q-card-section horizontal>
             <div class="gt-xs col-4 text-center text-caption q-mt-lg">
-              <div class="q-mt-lg text-h5 text-weight-thin">
-                Provide Feedback
-              </div>
+             
               <img
                 width="200px"
                 src="https://preview.colorlib.com/theme/bootstrap/contact-form-16/images/undraw-contact.svg"
@@ -307,12 +307,13 @@
             </div>
             <!-- <q-seperator /> -->
             <q-card-section class="col">
+              <div class="text-center text-h5 text-weight-thin">Provide Feedback</div>
               <q-form
                 @click.stop=""
                 @submit.prevent="onFeedback()"
                 class="q-gutter-md q-pa-md"
               >
-                <div class="row  q-pa-lg q-col-gutter-xs">
+                <div class="row q-col-gutter-xs">
                   <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
                     <q-input
                       rounded
@@ -431,13 +432,18 @@ export default {
 
       mail: {},
 
+      isMounted: false,
+
       loading: false,
+
+      searchLoading: false,
 
       options: ["30 minutes", "1 Hour", "2 Hours", "5 Hours", "1 day"]
     };
   },
   mounted() {
     // this.geolocate();
+    console.log("mounted");
 
     let timeStamp = Date.now();
     let formattedString = date.formatDate(timeStamp, "YYYY-MM-DD");
@@ -469,16 +475,30 @@ export default {
     },
 
     navigate() {
+       this.searchLoading = true
       let postal = {
         postal: this.pin
       };
+
+      //  this.parking_zones.forEach(zone => {
+      //     // console.log("zone", zone);
+      //     let marker = {
+      //       lat: parseFloat(zone.lat),
+      //       lng: parseFloat(zone.lng),
+      //       label: zone.pname,
+      //       id: zone.id
+      //     };
+      //     this.markers = [...this.markers, marker];
+
       // console.log("nav");
       this.$axios
         .post("postal", postal)
         .then(response => {
+          this.searchLoading = false
+          console.log("postal", response.data);
           if (response.data.length < 1) {
             this.$q.notify({
-              message: "Postal code with " + postal.postal + " 354645not found",
+              message: "Postal code with " + postal.postal + "not found",
               color: "red-4",
               position: "top",
               icon: "warning"
@@ -492,7 +512,8 @@ export default {
             let marker = {
               lat: parseFloat(zone.lat),
               lng: parseFloat(zone.lng),
-              label: zone.pname
+              label: zone.pname,
+              id: zone.id
             };
             this.markers = [...this.markers, marker];
 
@@ -500,6 +521,7 @@ export default {
           });
         })
         .catch(error => {
+          this.searchLoading = false
           console.log("error", error.message);
           this.$q.notify({
             message: error.message,
@@ -579,7 +601,7 @@ export default {
 
     openInfoWindowTemplate(m) {
       this.parking_id = m.id;
-      // console.log("mouse over", m);
+      console.log("mouse over", this.parking_id);
       this.address = m.label;
       // const { lat, lng, name, street, zip, city } = this.loadedDealers[index];
       this.infoWindow.position = { lat: m.lat, lng: m.lng };
@@ -625,9 +647,9 @@ export default {
       this.infoWindow.open = false;
     },
 
-    geolocate: function() {
+    geolocate: async function() {
       // console.log("test");
-      this.$axios
+      await this.$axios
         .get("parking-zones")
         .then(response => {
           this.parking_zones = response.data;
@@ -642,6 +664,8 @@ export default {
 
         // lat: 23.7206042,
         // lng: 92.728546
+        this.isMounted = true;
+        console.log("set mounted");
         this.center = {
           lat: position.coords.latitude,
           // lat: 21.1594627,
@@ -654,7 +678,7 @@ export default {
         this.lng = position.coords.longitude;
 
         this.parking_zones.forEach(zone => {
-          // console.log("zone", zone);
+          console.log("zone settt", zone);
           let marker = {
             lat: parseFloat(zone.lat),
             lng: parseFloat(zone.lng),
@@ -714,6 +738,8 @@ export default {
             position: "top",
             icon: "warning"
           });
+          this.loading = false;
+          this.show = 3;
         });
     },
 

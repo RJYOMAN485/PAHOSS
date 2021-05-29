@@ -18,8 +18,8 @@ const routes = [
         path: "/dashboard",
         component: () => import("pages/Dashboard.vue"),
         meta: { requireGuest: true },
-        beforeEnter: async (to, form, next) => {
-          await axios
+        beforeEnter:  (to, form, next) => {
+           axios
             .get(APP_URL + "user")
             .then(response => {
               console.log("dashboard admin");

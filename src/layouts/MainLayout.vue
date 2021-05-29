@@ -28,12 +28,12 @@
           </router-link>
           <q-space/>
 
-        <q-item  v-if="roles == 'user'" to="/mybookings" class="q-ml-md" clickable>
+        <q-item  v-if="roles == 'user'" to="/mybookings"  clickable>
           <q-item-section>
             <q-item-label>Bookings</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item  v-if="roles == 'user'" to="/contact" class="q-ml-md" clickable>
+        <q-item  v-if="roles == 'user'" to="/contact"  clickable>
           <q-item-section>
             <q-item-label>Contact us</q-item-label>
           </q-item-section>

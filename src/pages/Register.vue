@@ -204,7 +204,7 @@ export default {
         .catch(err => {
           console.log("error message:", err.message);
           this.$q.notify({
-            message: err,message,
+            message: err.message,
             color: "red-4",
             position: "top",
             icon: "warning"
