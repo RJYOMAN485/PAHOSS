@@ -352,7 +352,6 @@ const routes = [
           next("/admin");
         })
         .catch(err => {
-          console.log("wtf");
           next();
         });
     }
