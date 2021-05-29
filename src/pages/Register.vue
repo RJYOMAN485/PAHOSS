@@ -137,7 +137,7 @@
             ><q-icon name="info" size="xs" />Already have an account ?
             <q-btn
               size="xs"
-              to="/login"
+              to="/login/user"
               flat
               color="blue"
               dense
@@ -164,15 +164,15 @@ export default {
       errors: [],
 
       formData: {
-        name: "dummy",
-        email: "dummy@gmail.com",
-        password: "password",
-        contact: "8999999999",
-        address: "ITI Veng",
-        car_type: "XUV",
-        confirmPassword: "password",
+        name: "",
+        email: "",
+        password: "",
+        contact: "",
+        address: "",
+        car_type: "",
+        confirmPassword: "",
         roles: "user",
-        gender: "female"
+        gender: ""
       },
       error: {}
     };

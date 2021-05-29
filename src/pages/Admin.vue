@@ -160,13 +160,7 @@
       </div>
       <q-markup-table flat bordered>
         <thead class="bg-teal">
-          <tr>
-            <th colspan="8">
-              <div class="row no-wrap items-center">
-                <div class="text-h5 text-white">Today's Booking</div>
-              </div>
-            </th>
-          </tr>
+          
           <tr style="color: #444">
             <th class="text-left">Name</th>
             <th class="text-right">Contact</th>

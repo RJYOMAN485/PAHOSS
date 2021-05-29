@@ -111,7 +111,6 @@ export default {
     },
     async submitForm() {
       let userDetails = {
-  
         name: "dummy",
         email: "rj@gmail.com",
         roles: "user"
@@ -145,7 +144,12 @@ export default {
             })
             .catch(error => {
               this.loading = false;
-              console.log(error.message);
+              this.$q.notify({
+                message: "Invalid login credentials",
+                color: "red-4",
+                position: "top",
+                icon: "warning"
+              });
             });
         });
     }
@@ -161,8 +165,4 @@ export default {
   background-size: cover
   background-repeat: no-repeat
   background-position: center
-  // background: #6190E8 /* fallback for old browsers */
-  // background: -webkit-linear-gradient(to top, #A7BFE8, #6190E8)  /* Chrome 10-25, Safari 5.1-6 */
-  // background: linear-gradient(to top, #A7BFE8, #6190E8) /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-.my-card
 </style>

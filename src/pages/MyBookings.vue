@@ -94,6 +94,7 @@
         </tr>
         <tr style="color: #444">
           <th class="text-left">Parking Name</th>
+          <th class="text-left">Booking id</th>
           <th class="text-right">Entry date & time</th>
           <th class="text-right">Exit date & time</th>
 
@@ -106,6 +107,7 @@
       <tbody style="color: #555555" class="bg-grey-3">
         <tr v-for="booking in bookings" :key="booking.id">
           <td class="text-left">{{ booking.pname }}</td>
+          <td class="text-left">{{ booking.id }}</td>
           <td class="text-right">
             {{ booking.entry_date }} {{ booking.entry_time }}
           </td>
@@ -113,7 +115,12 @@
             {{ booking.exit_date }} {{ booking.exit_time }}
           </td>
           <td class="text-right">{{ booking.amount }}</td>
-          <td class="text-right">{{ booking.status }}</td>
+          <td
+            :class="booking.status == 'active' ? 'text-green' : 'text-red'"
+            class="text-right"
+          >
+            {{ booking.status }}
+          </td>
 
           <td class="text-right">
             <q-btn
@@ -123,7 +130,7 @@
               flat
               class="bg-grey-3 customBtn"
               color="red-3"
-              :icon="booking.status=='active' ? 'close' : 'block'"
+              :icon="booking.status == 'active' ? 'close' : 'block'"
               @click="setCancelId(booking.id)"
             />
           </td>
@@ -136,7 +143,7 @@
 export default {
   mounted() {
     this.id = this.$store.state.store.userDetails.id;
-    this.getBookings()
+    this.getBookings();
   },
   data() {
     return {
@@ -173,10 +180,9 @@ export default {
 
     getBookings() {
       this.$axios
-        .get("bookingid/"+this.id)
+        .get("bookingid/" + this.id)
         .then(response => {
           this.bookings = response.data;
-        
         })
         .catch(error => {
           console.log("error", error.message);
@@ -185,7 +191,6 @@ export default {
     setCancelId(id) {
       this.cancelId = id;
       this.confirm = true;
-     
     }
   }
 };

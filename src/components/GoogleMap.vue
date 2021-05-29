@@ -448,7 +448,7 @@ export default {
 
     this.date = this.entryDate = this.exitDate = formattedString;
 
-    console.log("exit date: " + this.exitDate);
+    // console.log("exit date: " + this.exitDate);
 
     this.geolocate();
 
@@ -457,7 +457,7 @@ export default {
       book_id: 12
     };
 
-    console.log("mail", this.mail);
+    // console.log("mail", this.mail);
 
     // this.$refs.mapRef.$mapPromise.then(map => {
     //   map.panTo({ lat: 1.38, lng: 103.8 });
@@ -472,14 +472,23 @@ export default {
       let postal = {
         postal: this.pin
       };
-      console.log("nav");
+      // console.log("nav");
       this.$axios
         .post("postal", postal)
         .then(response => {
-          console.log(response.data);
+          if (response.data.length < 1) {
+            this.$q.notify({
+              message: "Postal code with " + postal.postal + " 354645not found",
+              color: "red-4",
+              position: "top",
+              icon: "warning"
+            });
+            return;
+          }
+          // console.log(response.data);
           this.markers = [];
           response.data.forEach(zone => {
-            console.log("zone", zone);
+            // console.log("zone", zone);
             let marker = {
               lat: parseFloat(zone.lat),
               lng: parseFloat(zone.lng),
@@ -487,7 +496,7 @@ export default {
             };
             this.markers = [...this.markers, marker];
 
-            console.log("allmarker", this.markers);
+            // console.log("allmarker", this.markers);
           });
         })
         .catch(error => {
@@ -536,7 +545,7 @@ export default {
 
     onFeedback() {
       let formData = {
-        user_id: 18,
+        user_id: this.$store.state.store.userDetails.id,
         message: this.message
       };
       // return
@@ -570,7 +579,7 @@ export default {
 
     openInfoWindowTemplate(m) {
       this.parking_id = m.id;
-      console.log("mouse over", m);
+      // console.log("mouse over", m);
       this.address = m.label;
       // const { lat, lng, name, street, zip, city } = this.loadedDealers[index];
       this.infoWindow.position = { lat: m.lat, lng: m.lng };
@@ -617,19 +626,19 @@ export default {
     },
 
     geolocate: function() {
-      console.log("test");
+      // console.log("test");
       this.$axios
         .get("parking-zones")
         .then(response => {
           this.parking_zones = response.data;
-          console.log("parking-zones", response.data);
+          // console.log("parking-zones", response.data);
         })
         .catch(error => {
           console.log("error", error.message);
         });
       navigator.geolocation.getCurrentPosition(position => {
-        console.log("lat: " + position.coords.latitude);
-        console.log("lng: " + position.coords.longitude);
+        // console.log("lat: " + position.coords.latitude);
+        // console.log("lng: " + position.coords.longitude);
 
         // lat: 23.7206042,
         // lng: 92.728546
@@ -645,7 +654,7 @@ export default {
         this.lng = position.coords.longitude;
 
         this.parking_zones.forEach(zone => {
-          console.log("zone", zone);
+          // console.log("zone", zone);
           let marker = {
             lat: parseFloat(zone.lat),
             lng: parseFloat(zone.lng),
@@ -654,7 +663,7 @@ export default {
           };
           this.markers = [...this.markers, marker];
 
-          console.log("allmarker", this.markers);
+          // console.log("allmarker", this.markers);
         });
       });
 
@@ -683,7 +692,7 @@ export default {
         .post("storebooking", formData)
         .then(response => {
           // return console.log(response.data);
-          console.log("success", response.data);
+          // console.log("success", response.data);
 
           this.$q.notify({
             message: "Booking Success. Check your email for booking id",
@@ -710,12 +719,12 @@ export default {
 
     showCurrent() {
       this.show = false;
-      console.log("show", this.show);
+      // console.log("show", this.show);
     },
 
     optionsFnTime3(hr) {
       this.exitDate = this.entryDate;
-      console.log("helo");
+      // console.log("helo");
       // return
       var str = ("index", this.entryTime.indexOf(":"));
 
@@ -735,20 +744,20 @@ export default {
           let newHr = "";
 
           let extraMin = m % 60;
-          console.log("extra min", Math.trunc(extraMin));
+          // console.log("extra min", Math.trunc(extraMin));
 
           if (Number(extraMin) < 10) extraMin = "0" + extraMin;
 
           if (Number(hr) + Math.trunc(extraHr) < 10) {
             newHr = "0" + (Number(hr) + Math.trunc(extraHr));
-            console.log("nnkj", newHr);
+            // console.log("nnkj", newHr);
           } else {
             newHr = Number(hr) + Math.trunc(extraHr);
           }
 
           // console.log('trunc',Math.trunc(extraHr) + 1);
 
-          console.log("newHR", Number(hr) + Math.trunc(extraHr));
+          // console.log("newHR", Number(hr) + Math.trunc(extraHr));
 
           this.exitTime = newHr + ":" + extraMin;
         } else {
@@ -784,7 +793,7 @@ export default {
           this.exitDate.length
         );
 
-        console.log("day", day);
+        // console.log("day", day);
 
         day = Number(day) + 1;
 
@@ -794,16 +803,16 @@ export default {
 
         var year = this.entryDate.substring(0, 4);
 
-        console.log("year", year);
+        // console.log("year", year);
 
         var month = this.entryDate.substring(5, 7);
 
-        console.log("month", month);
+        // console.log("month", month);
 
         this.exitDate = year + "-" + month + "-" + day;
       }
 
-      console.log("optonsfn", this.exitDate);
+      // console.log("optonsfn", this.exitDate);
     },
 
     getPayment() {
@@ -844,7 +853,7 @@ export default {
 
     onSubmit() {
       this.$axios.defaults.withCredentials = true;
-      console.log("submitted");
+      // console.log("submitted");
 
       this.$axios
         .post("http://pahoss.herokuapp.com/api/storeparking", this.formData)
@@ -864,7 +873,7 @@ export default {
     getCityAndCountry() {
       this.formData.lat = this.marker.position.lat;
       this.formData.lng = this.marker.position.lng;
-      console.log(this.marker.position.lat);
+      // console.log(this.marker.position.lat);
       // axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 
       let apiUrl = `http://geocode.xyz/${this.marker.position.lat},${this.marker.position.lng} ?json=1`;
@@ -873,7 +882,7 @@ export default {
       this.$axios
         .get(apiUrl)
         .then(result => {
-          console.log("address", result.data);
+          // console.log("address", result.data);
           this.formData.location = result.data.city + "," + result.data.region;
           // this.postal = result.data.postal
         })

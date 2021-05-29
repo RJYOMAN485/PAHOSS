@@ -88,12 +88,13 @@
         <tr>
           <th colspan="10">
             <div class="row no-wrap items-center">
-              <div class="text-h5 text-white">My Bookings</div>
+              <div class="text-h5 text-white">Today's Bookings</div>
             </div>
           </th>
         </tr>
         <tr style="color: #444">
           <th class="text-left">Name</th>
+          <th class="text-left">Book id</th>
           <th class="text-left">Parking Name</th>
           <th class="text-right">Entry date & time</th>
           <th class="text-right">Exit date & time</th>
@@ -107,6 +108,7 @@
       <tbody style="color: #555555" class="bg-grey-3">
         <tr v-for="booking in bookings" :key="booking.id">
           <td class="text-left">{{ booking.name }}</td>
+           <td class="text-left">{{ booking.id }}</td>
           <td class="text-left">{{ booking.pname }}</td>
           <td class="text-right">
             {{ booking.entry_date }} {{ booking.entry_time }}
