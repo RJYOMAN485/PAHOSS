@@ -48,19 +48,19 @@
           <!-- </div> -->
         </q-form>
 
-        <div class="text-green q-mt-md" style="max-width:430px;display:flex">
-          <small class=""
-            ><q-icon name="info" size="xs" />Already have an account ?
+       
+        <div class="text-green text-center q-mt-md" >
+          
             <q-btn
-              size="xs"
+              size="sm"
               to="/register"
               flat
               color="blue"
               dense
-              label="Register"
+              label="Register here for account"
             />
-            page instead
-          </small>
+           
+          
         </div>
       </q-card-section>
     </q-card>

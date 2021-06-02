@@ -1,6 +1,7 @@
 <template>
   <div class="q-mt-lg">
     <div v-if="show == 0" class="row text-center justify-center">
+      {{ this.infoWindow.open ? "true" : "false" }}
       <div style="color:#444" class="col-6 col-xs-10 text-body2">
         Select Location or
         <q-form @submit="navigate">
@@ -43,7 +44,7 @@
           class="col-6 col-xs-10"
           ref="mapRef"
           :center="center"
-          :zoom="13"
+          :zoom="9"
           style="width:100%;  height: 400px;"
         >
           <gmap-marker
@@ -63,9 +64,12 @@
             :opened="infoWindow.open"
             @closeclick="infoWindow.open = false"
           >
-            <div class="text-center">
-              <small>{{ address }}</small
-              ><br />
+            <div style="display:grid" class="text-center">
+              <small class="text-bold">{{ address }}</small
+              >
+
+              <small> ( {{ available_time }} )</small>
+             
               <q-btn
                 @click="setLocation()"
                 flat
@@ -83,11 +87,29 @@
             <div class="text-h6">Step 1 of 2 Information</div>
           </q-card-section>
           <q-form @submit.prevent="getPayment" class="q-gutter-md q-pa-lg">
-            <div>
+            <!-- <div>
               <q-icon color="primary" size="lg" name="directions_car" />
               <span style="color:#444">{{ this.address }}</span>
-            </div>
-            <div class="row justify-between">
+
+              <q-icon style="float:right" color="grey" size="sm" name="today" />
+              <br />
+              <span style="color:#444;float:right">Morning</span>
+            </div> -->
+
+            <q-list >
+              <q-item >
+                <q-item-section >
+                  <q-icon color="primary" size="lg" name="directions_car" />
+              <span style="color:#444">{{ this.address }}</span>
+                </q-item-section>
+                <q-item-section style="align-items: center" avatar>
+                  <q-icon  color="grey" size="sm" name="today" />
+                  <span style="color:#444;">{{ available_time }}</span>
+                  </q-item-section>
+              </q-item>
+            </q-list>
+
+            <div class="row q-mt-lg justify-between">
               <div class="col-6">
                 <q-input label="Entry date" filled v-model="entryDate">
                   <template v-slot:append>
@@ -121,6 +143,7 @@
                 <q-input
                   label="Entry time"
                   @click="optionsFnTime3"
+                 
                   filled
                   v-model="entryTime"
                   mask="time"
@@ -132,7 +155,7 @@
                         transition-show="scale"
                         transition-hide="scale"
                       >
-                        <q-time @click="optionsFnTime3" v-model="entryTime">
+                        <q-time  :hour-options="hourOptionsTime1" @click="optionsFnTime3" v-model="entryTime">
                           <div class="row items-center justify-end">
                             <q-btn
                               v-close-popup
@@ -299,7 +322,6 @@
         <q-card class="q-pa-md" flat bordered>
           <q-card-section horizontal>
             <div class="gt-xs col-4 text-center text-caption q-mt-lg">
-             
               <img
                 width="200px"
                 src="https://preview.colorlib.com/theme/bootstrap/contact-form-16/images/undraw-contact.svg"
@@ -307,7 +329,9 @@
             </div>
             <!-- <q-seperator /> -->
             <q-card-section class="col">
-              <div class="text-center text-h5 text-weight-thin">Provide Feedback</div>
+              <div class="text-center text-h5 text-weight-thin">
+                Provide Feedback
+              </div>
               <q-form
                 @click.stop=""
                 @submit.prevent="onFeedback()"
@@ -387,7 +411,7 @@ export default {
       pin: null,
 
       entryDate: null,
-      entryTime: "08:56",
+      entryTime: "09:00",
       validateExit: "",
 
       exitDate: null,
@@ -402,7 +426,8 @@ export default {
       cardHolder: "Dummy Holder",
       month: "05",
       year: "2023",
-      hourOptionsTime1: [9, 10, 11, 13, 15],
+      hourOptionsTime1: [],
+      available_time : 'Morning',
 
       marker: { position: { lat: 10, lng: 10 } },
       center: { lat: 10, lng: 10 },
@@ -430,6 +455,8 @@ export default {
 
       period: "30 minutes",
 
+    
+
       mail: {},
 
       isMounted: false,
@@ -443,12 +470,16 @@ export default {
   },
   mounted() {
     // this.geolocate();
-    console.log("mounted");
+    console.log("mounted",this.hourOptionsTime1);
 
     let timeStamp = Date.now();
     let formattedString = date.formatDate(timeStamp, "YYYY-MM-DD");
 
-    // console.log("timestamp", formattedString);
+    let time = new Date("2011-04-20T09:30:51.01");
+
+    time = time.getHours() + ":" + time.getMinutes();
+
+    console.log("timestamp", time);
 
     this.optionsFnTime3();
 
@@ -463,6 +494,10 @@ export default {
       book_id: 12
     };
 
+    // this.$refs.mapRef.$mapPromise.then(() => {
+    //   this.$refs.mapRef.$mapObject.setClickableIcons(false);
+    // });
+
     // console.log("mail", this.mail);
 
     // this.$refs.mapRef.$mapPromise.then(map => {
@@ -475,7 +510,7 @@ export default {
     },
 
     navigate() {
-       this.searchLoading = true
+      this.searchLoading = true;
       let postal = {
         postal: this.pin
       };
@@ -494,7 +529,7 @@ export default {
       this.$axios
         .post("postal", postal)
         .then(response => {
-          this.searchLoading = false
+          this.searchLoading = false;
           console.log("postal", response.data);
           if (response.data.length < 1) {
             this.$q.notify({
@@ -521,7 +556,7 @@ export default {
           });
         })
         .catch(error => {
-          this.searchLoading = false
+          this.searchLoading = false;
           console.log("error", error.message);
           this.$q.notify({
             message: error.message,
@@ -599,7 +634,30 @@ export default {
       console.log("hello");
     },
 
-    openInfoWindowTemplate(m) {
+  openInfoWindowTemplate(m) {
+        console.log('m window',m.available_time);
+      if (m.available_time == "Morning") {
+        this.entryTime = "09:00";
+        this.exitTime = "09:30";
+        this.available_time = "Morning";
+        this.hourOptionsTime1 = [9, 10, 11, 12];
+      } else if (m.available_time == "Morning-Afternoon") {
+        this.entryTime = "09:00";
+        this.exitTime = "09:30";
+        this.hourOptionsTime1 = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+        this.available_time = "Morning-Afternoon";
+        this.hourOptionsTime1 = [9, 10, 11, 12, 13, 14, 15, 16, 17];
+      } else if (m.available_time == "Afternoon") {
+        this.entryTime = "13:00";
+        this.exitTime = "13:30";
+        this.available_time = "Afternoon";
+        this.hourOptionsTime1 = [12, 13, 14, 15, 16, 17];
+      } else {
+        this.entryTime = "18:00";
+        this.exitTime = "18:30";
+        this.available_time = "Night";
+        this.hourOptionsTime1 = [18, 19, 20, 21, 22, 23, 34];
+      }
       this.parking_id = m.id;
       console.log("mouse over", this.parking_id);
       this.address = m.label;
@@ -653,43 +711,59 @@ export default {
         .get("parking-zones")
         .then(response => {
           this.parking_zones = response.data;
-          // console.log("parking-zones", response.data);
+          console.log("parking-zones", response.data);
         })
         .catch(error => {
           console.log("error", error.message);
         });
-      navigator.geolocation.getCurrentPosition(position => {
-        // console.log("lat: " + position.coords.latitude);
-        // console.log("lng: " + position.coords.longitude);
 
-        // lat: 23.7206042,
-        // lng: 92.728546
-        this.isMounted = true;
-        console.log("set mounted");
-        this.center = {
-          lat: position.coords.latitude,
-          // lat: 21.1594627,
-          lng: position.coords.longitude
-          // lng: 72.6822083
-        };
+      // if(navigator.geolocation) {
 
-        this.lat = position.coords.latitude;
-        // lat: 21.1594627,
-        this.lng = position.coords.longitude;
+      // }
 
-        this.parking_zones.forEach(zone => {
-          console.log("zone settt", zone);
-          let marker = {
-            lat: parseFloat(zone.lat),
-            lng: parseFloat(zone.lng),
-            label: zone.pname,
-            id: zone.id
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          // console.log("lat: " + position.coords.latitude);
+          // console.log("lng: " + position.coords.longitude);
+
+          // lat: 23.7206042,
+          // lng: 92.728546
+          this.isMounted = true;
+          console.log("set mounted");
+          this.center = {
+            lat: position.coords.latitude,
+            // lat: 21.1594627,
+            lng: position.coords.longitude
+            // lng: 72.6822083
           };
-          this.markers = [...this.markers, marker];
 
-          // console.log("allmarker", this.markers);
-        });
-      });
+          this.lat = position.coords.latitude;
+          // lat: 21.1594627,
+          this.lng = position.coords.longitude;
+
+          this.parking_zones.forEach(zone => {
+            console.log("zone settt", zone);
+            let marker = {
+              lat: parseFloat(zone.lat),
+              lng: parseFloat(zone.lng),
+              label: zone.pname,
+              id: zone.id,
+              available_time: zone.available_time
+            };
+            this.markers = [...this.markers, marker];
+
+            // console.log("allmarker", this.markers);
+          });
+        },
+        () => {
+          this.$q.notify({
+            message: "Location access denied. Enable location to book",
+            color: "red-4",
+            position: "top",
+            icon: "warning"
+          });
+        }
+      );
 
       // this.getCityAndCountry();
 
@@ -747,6 +821,8 @@ export default {
       this.show = false;
       // console.log("show", this.show);
     },
+
+    
 
     optionsFnTime3(hr) {
       this.exitDate = this.entryDate;
@@ -920,6 +996,10 @@ export default {
     //sets the position of marker when dragged
     handleMarkerDrag(e) {
       this.marker.position = { lat: e.latLng.lat(), lng: e.latLng.lng() };
+    },
+
+    handleMap() {
+      console.log("map clicked");
     },
 
     //Moves the map view port to marker

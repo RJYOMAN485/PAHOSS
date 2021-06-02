@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <div class="row q-col-gutter-lg ">
-      <div class="col-6 col-lg-6 col-xs-12">
+      <div class="col-sm-6 col-lg-6 col-xs-12">
         <q-card>
           <q-card-section class="row items-center q-pb-none">
             <div class="text-h6">Add Parking</div>
@@ -87,7 +87,7 @@
           </q-form>
         </q-card>
       </div>
-      <div class="col-6 col-lg-6 col-xs-12">
+      <div class="col-6 col-sm-6 col-lg-6 col-xs-12">
         <!-- <p>Selected Position: {{ marker.position }}</p>
         <p>Location: {{ location }}</p> -->
         <q-card>
@@ -140,12 +140,12 @@ export default {
         location: "",
         lat: "null",
         lng: "null",
-        postal: "888888",
+        postal: "",
         available_space: 6,
         available_time: null
       },
 
-      options: ["Morning", "Morning-Afternoon", "Night"]
+      options: ["Morning", "Morning-Afternoon", "Afternoon", "Night"]
     };
   },
   mounted() {
@@ -187,33 +187,42 @@ export default {
     },
     //detects location from browser
     geolocate() {
-      navigator.geolocation.getCurrentPosition(position => {
-        this.marker.position = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        };
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          this.marker.position = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
 
-        this.getCityAndCountry();
+          this.getCityAndCountry();
 
-        this.panToMarker();
-      });
+          this.panToMarker();
+        },
+        () => {
+          this.$q.notify({
+            message: "Location access denied. Enable location to add slot",
+            color: "red-4",
+            position: "top",
+            icon: "warning"
+          });
+        }
+      );
     },
 
-    getCityAndCountry() {
+    async getCityAndCountry() {
       this.formData.lat = this.marker.position.lat;
       this.formData.lng = this.marker.position.lng;
-    
+
       // axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 
       // https://maps.googleapis.com/maps/api/geocode/json?latlng=23.724265253426005,92.72666931152344&key=AIzaSyDDXkzEIj9sB3J_ohqT0woVWqAJQiyRmAE
 
-      let apiUrl = `http://geocode.xyz/${this.marker.position.lat},${this.marker.position.lng} ?json=1`;
+      let apiUrl = `https://geocode.xyz/${this.marker.position.lat},${this.marker.position.lng} ?json=1`;
       this.$axios.defaults.withCredentials = false;
 
-      this.$axios
+      await this.$axios
         .get(apiUrl)
         .then(result => {
-          
           this.formData.location = result.data.city + "," + result.data.region;
           // this.postal = result.data.postal
         })
