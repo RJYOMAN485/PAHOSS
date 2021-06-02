@@ -1,7 +1,7 @@
 <template>
   <div class="q-mt-lg">
     <div v-if="show == 0" class="row text-center justify-center">
-      {{ this.infoWindow.open ? "true" : "false" }}
+    
       <div style="color:#444" class="col-6 col-xs-10 text-body2">
         Select Location or
         <q-form @submit="navigate">
