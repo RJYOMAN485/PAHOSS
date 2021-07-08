@@ -50,6 +50,7 @@
                 <label for="">Password</label>
                 <q-input
                   v-model="user.password"
+                  type="password"
                   rounded
                   color="purple-12"
                   dense
@@ -78,6 +79,7 @@
                 <label for="">Confirm Password</label>
                 <q-input
                   v-model="user.password_confirmation"
+                  type="password"
                   rounded
                   outlined
                   color="purple-12"

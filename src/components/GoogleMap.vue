@@ -1,7 +1,6 @@
 <template>
   <div class="q-mt-lg">
     <div v-if="show == 0" class="row text-center justify-center">
-    
       <div style="color:#444" class="col-6 col-xs-10 text-body2">
         Select Location or
         <q-form @submit="navigate">
@@ -44,8 +43,8 @@
           class="col-6 col-xs-10"
           ref="mapRef"
           :center="center"
-          :zoom="9"
-          style="width:100%;  height: 400px;"
+          :zoom="13"
+          style="width:100%;  height: 800px;"
         >
           <gmap-marker
             :key="index"
@@ -65,11 +64,10 @@
             @closeclick="infoWindow.open = false"
           >
             <div style="display:grid" class="text-center">
-              <small class="text-bold">{{ address }}</small
-              >
+              <small class="text-bold">{{ address }}</small>
 
               <small> ( {{ available_time }} )</small>
-             
+
               <q-btn
                 @click="setLocation()"
                 flat
@@ -86,7 +84,7 @@
           <q-card-section class="bg-primary text-white">
             <div class="text-h6">Step 1 of 2 Information</div>
           </q-card-section>
-          <q-form @submit.prevent="getPayment" class="q-gutter-md q-pa-lg">
+          <q-form @submit.prevent="onBook" class="q-gutter-md q-pa-lg">
             <!-- <div>
               <q-icon color="primary" size="lg" name="directions_car" />
               <span style="color:#444">{{ this.address }}</span>
@@ -96,16 +94,16 @@
               <span style="color:#444;float:right">Morning</span>
             </div> -->
 
-            <q-list >
-              <q-item >
-                <q-item-section >
+            <q-list>
+              <q-item>
+                <q-item-section>
                   <q-icon color="primary" size="lg" name="directions_car" />
-              <span style="color:#444">{{ this.address }}</span>
+                  <span style="color:#444">{{ this.address }}</span>
                 </q-item-section>
                 <q-item-section style="align-items: center" avatar>
-                  <q-icon  color="grey" size="sm" name="today" />
+                  <q-icon color="grey" size="sm" name="today" />
                   <span style="color:#444;">{{ available_time }}</span>
-                  </q-item-section>
+                </q-item-section>
               </q-item>
             </q-list>
 
@@ -143,7 +141,6 @@
                 <q-input
                   label="Entry time"
                   @click="optionsFnTime3"
-                 
                   filled
                   v-model="entryTime"
                   mask="time"
@@ -155,7 +152,11 @@
                         transition-show="scale"
                         transition-hide="scale"
                       >
-                        <q-time  :hour-options="hourOptionsTime1" @click="optionsFnTime3" v-model="entryTime">
+                        <q-time
+                          :hour-options="hourOptionsTime1"
+                          @click="optionsFnTime3"
+                          v-model="entryTime"
+                        >
                           <div class="row items-center justify-end">
                             <q-btn
                               v-close-popup
@@ -228,6 +229,13 @@
               </div>
             </div>
             <q-btn label="Continue" type="submit" color="secondary" />
+            <q-btn
+              label="Back"
+              flat
+              @click="show = 0"
+              icon="arrow_back"
+              color="primary"
+            />
           </q-form>
           <q-separator />
         </q-card>
@@ -389,6 +397,8 @@
 <script>
 import { gmapApi } from "vue2-google-maps";
 import { date } from "quasar";
+import axios from 'axios'
+import LoginVue from 'src/pages/Login.vue';
 
 export default {
   name: "GoogleMap",
@@ -427,7 +437,7 @@ export default {
       month: "05",
       year: "2023",
       hourOptionsTime1: [],
-      available_time : 'Morning',
+      available_time: "Morning",
 
       marker: { position: { lat: 10, lng: 10 } },
       center: { lat: 10, lng: 10 },
@@ -455,8 +465,6 @@ export default {
 
       period: "30 minutes",
 
-    
-
       mail: {},
 
       isMounted: false,
@@ -470,7 +478,7 @@ export default {
   },
   mounted() {
     // this.geolocate();
-    console.log("mounted",this.hourOptionsTime1);
+    console.log("mounted", this.hourOptionsTime1);
 
     let timeStamp = Date.now();
     let formattedString = date.formatDate(timeStamp, "YYYY-MM-DD");
@@ -634,8 +642,8 @@ export default {
       console.log("hello");
     },
 
-  openInfoWindowTemplate(m) {
-        console.log('m window',m.available_time);
+    openInfoWindowTemplate(m) {
+      console.log("m window", m.available_time);
       if (m.available_time == "Morning") {
         this.entryTime = "09:00";
         this.exitTime = "09:30";
@@ -769,60 +777,146 @@ export default {
 
       this.panToMarker();
     },
+    success() {
+      console.log('success pagess');
+    },
     onBook() {
-      let formData = {
-        user_id: this.$store.state.store.userDetails.id,
-        parking_id: this.parking_id,
-        entry_date: this.entryDate,
-        entry_time: this.entryTime,
-        exit_date: this.exitDate,
-        exit_time: this.exitTime,
-        amount: this.amount,
-        email: this.$store.state.store.userDetails.email,
-        status: "active"
+      console.log('this data',this);
+       let formData = {
+            user_id: this.$store.state.store.userDetails.id,
+            parking_id: this.parking_id,
+            entry_date: this.entryDate,
+            entry_time: this.entryTime,
+            exit_date: this.exitDate,
+            exit_time: this.exitTime,
+            amount: this.amount,
+            email: this.$store.state.store.userDetails.email,
+            status: "active"
+          };
+
+        console.log('form data',formData);
+
+        var this2 = this;
+
+      var options = {
+        key: "rzp_test_49IkkEADvrZ5vM",
+        amount: this.amount * 100, // 2000 paise = INR 20
+        name: "PAHOSS",
+        description: "Smart Parking",
+        //  order_id: "order_9A33XWu170gUtm",
+        image:
+          "https://woocommerce.com/wp-content/uploads/2021/01/fb-razorpay@2x.png",
+        // handler: this.success(),
+        handler: function(response) {
+          console.log('success this',this);
+
+          
+          // this.loading = true;
+
+          axios
+            .post("storebooking", formData)
+            .then(response => {
+
+
+              this2.$q.notify({
+                message: "Booking Success. Check your email for booking id",
+                color: "green",
+                position: "top",
+                icon: "thumb_up"
+              });
+
+              this2.loading = false;
+              this2.show = 3;
+            })
+            .catch(error => {
+              this2.loading = false;
+              console.log("error", error.message);
+              this2.$q.notify({
+                message:
+                  "Unable to send send booking id to email.Make sure your email is correct",
+                color: "red-4",
+                position: "top",
+                icon: "warning"
+              });
+              this2.loading = false;
+              this2.show = 3;
+            });
+          console.log("success payment");
+          alert(response.razorpay_payment_id);
+        },
+        prefill: {
+          name: "Gaurav Kumar",
+          email: "test@test.com",
+          contact: "8258865517"
+        },
+        notes: {
+          address: "Hello World"
+        },
+        theme: {
+          color: "#F37254"
+        }
       };
+      var rzp1 = new Razorpay(options);
 
-      this.loading = true;
+      rzp1.open();
 
-      // console.log(formData);
-      // return
-      this.$axios
-        .post("storebooking", formData)
-        .then(response => {
-          // return console.log(response.data);
-          // console.log("success", response.data);
+      rzp1.on("payment.failed", function(response) {
+        console.log("failure");
+      });
 
-          this.$q.notify({
-            message: "Booking Success. Check your email for booking id",
-            color: "green",
-            position: "top",
-            icon: "thumb_up"
-          });
-          // this.sendMail();
-          this.loading = false;
-          this.show = 3;
-        })
-        .catch(error => {
-          this.loading = false;
-          console.log("error", error.message);
-          this.$q.notify({
-            message:
-              "Unable to send send booking id to email.Make sure your email is correct",
-            color: "red-4",
-            position: "top",
-            icon: "warning"
-          });
-          this.loading = false;
-          this.show = 3;
-        });
+      // rzp1.on()
+
+      // let formData = {
+      //   user_id: this.$store.state.store.userDetails.id,
+      //   parking_id: this.parking_id,
+      //   entry_date: this.entryDate,
+      //   entry_time: this.entryTime,
+      //   exit_date: this.exitDate,
+      //   exit_time: this.exitTime,
+      //   amount: this.amount,
+      //   email: this.$store.state.store.userDetails.email,
+      //   status: "active"
+      // };
+
+      // this.loading = true;
+
+      // // console.log(formData);
+      // // return
+      // this.$axios
+      //   .post("storebooking", formData)
+      //   .then(response => {
+      //     // return console.log(response.data);
+      //     // console.log("success", response.data);
+
+      //     this.$q.notify({
+      //       message: "Booking Success. Check your email for booking id",
+      //       color: "green",
+      //       position: "top",
+      //       icon: "thumb_up"
+      //     });
+      //     // this.sendMail();
+      //     this.loading = false;
+      //     this.show = 3;
+      //   })
+      //   .catch(error => {
+      //     this.loading = false;
+      //     console.log("error", error.message);
+      //     this.$q.notify({
+      //       message:
+      //         "Unable to send send booking id to email.Make sure your email is correct",
+      //       color: "red-4",
+      //       position: "top",
+      //       icon: "warning"
+      //     });
+      //     this.loading = false;
+      //     this.show = 3;
+      //   });
     },
 
     showCurrent() {
       this.show = false;
       // console.log("show", this.show);
     },
-
-    
 
     optionsFnTime3(hr) {
       this.exitDate = this.entryDate;

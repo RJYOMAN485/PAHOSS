@@ -95,7 +95,7 @@ export default {
       errors: [],
 
       formData: {
-        email: "rj@gmail.com",
+        email: "rjxtri485@gmail.com",
         password: "password",
         roles: "user"
       },
